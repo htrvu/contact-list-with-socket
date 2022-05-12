@@ -8,7 +8,11 @@ import datetime
 
 import socket
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 sys.path.append('..')
+
+from client.MainWindow import MainWindow
 import common.global_definition as global_definition
 
 
@@ -40,5 +44,9 @@ def run_client():
     communicate_thread.start()
 
 if __name__ == "__main__":
-    thread = threading.Thread(target=run_client, args = ())
-    thread.start()
+    # thread = threading.Thread(target=run_client, args = ())
+    # thread.start()
+    app = QtWidgets.QApplication(sys.argv)
+    main_window = MainWindow()
+    main_window.show()
+    sys.exit(app.exec_())
