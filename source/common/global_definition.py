@@ -7,8 +7,8 @@
 
 
 LOOP_BACK = '127.0.0.1'
-HOST = '127.0.0.1'
-PORT = 22133
+HOST = 'localhost'
+PORT = 15215
 
 def set_host(ip_address):
     global HOST
