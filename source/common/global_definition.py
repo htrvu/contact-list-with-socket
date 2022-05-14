@@ -13,4 +13,3 @@ PORT = 15215
 def set_host(ip_address):
     global HOST
     HOST = ip_address
-
