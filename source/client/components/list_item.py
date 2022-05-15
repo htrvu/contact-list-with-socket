@@ -2,15 +2,19 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QFrame, QLabel, QLayout, QHBoxLayout, QSpacerItem
 
 from client.components.my_frame import MyFrame
-from client.components.round_img import RoundImage
+from client.components.round_label import RoundLabel
 from common.utils import image_to_bytes
 class ListItem(MyFrame):
-    def __init__(self, parent=None):
+    def __init__(self, data, parent=None):
         super().__init__(parent)
 
         self.setGeometry(QtCore.QRect(10, 10, 531, 81))         # cff4ff
         self.setStyleSheet("QFrame {border-bottom: 1px solid #ccc;} QFrame:hover {background-color: #cff4ff;} QLabel {background-color: transparent; border: none;}")
 
+        self.__set_layout()
+        self.__set_data(data)
+
+    def __set_layout(self):
         # Main layout of list item (horizontal)
         self.__main_layout = QHBoxLayout(self)
         self.__main_layout.setSizeConstraint(QLayout.SetFixedSize)
@@ -28,7 +32,7 @@ class ListItem(MyFrame):
         self.__main_layout.addItem(spacerItem1)
 
         # 2. Image
-        self.__img = RoundImage(64)
+        self.__img = RoundLabel(64)
         self.__main_layout.addWidget(self.__img)
 
         # Spacer between Image and Name
@@ -46,12 +50,12 @@ class ListItem(MyFrame):
         self.__main_layout.setStretch(2, 8)
     
 
-    def set_data(self, data):
+    def __set_data(self, data):
         self.setWhatsThis(data['id'])
         self.__id.setText(data['id'])
         self.__name.setText(data['name'])
         
-        # change here when use socket
+        # (change here when use socket)
         byte_img = image_to_bytes(f'../data/small_image/{data["image"]}')
 
         self.__img.set_img_from_bytes(byte_img)
