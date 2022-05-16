@@ -1,4 +1,5 @@
 from itertools import count
+from re import I
 import sys, os
 import connection
 import threading
@@ -10,9 +11,10 @@ import socket
 import signal
 
 from common import global_definition
-from common.request import Request
 from common.utils import print_color
 from common.utils import text_format
+from factory import reply_request
+import ast
 from factory import reply_request
 
 '''
@@ -21,42 +23,23 @@ from factory import reply_request
 
 list_of_client = []
 
-def is_still_connected(sock: socket.socket):
-    try:
-        sock.sendall(b"ping")
-        return True
-    except:
-        return False
-
 def serve(conn: socket.socket, addr):
     print_color(f'{addr[0]} connected', text_format.OKGREEN)
+
     while True:
-        try:
-            if is_still_connected(conn) == False:
-                print_color(f'{addr[0]} diconnected', text_format.FAIL)
-                return
-            
-            message = conn.recv(global_definition.PACKET_LIMIT_SIZE).decode()
-            request = None
+        if conn.fileno() == -1:
+            print_color(f'{addr[0]} connected', text_format.OKBLUE)
+            break
 
-            try:
-                request = Request(message = message)
-            except Exception as e:
-                request = None
-                print(e)
+        message = conn.recv(global_definition.PACKET_LIMIT_SIZE)
 
-            if request != None:
-                print(request.to_string())
-                reply_thread = threading.Thread(target = reply_request, args = (conn, request))
-                reply_thread.start()
-        except:
-            pass
-
-def remove_connection(conn):
-    global list_of_client
-    if conn in list_of_client:
-        conn.close()
-        list_of_client.remove(conn)
+        if message:
+            message = message.decode('utf-8')
+            print(type(message))
+            print('[*] DEBUG: ', message)
+            message_dict = ast.literal_eval(message)
+            print('[DEBUG DICT]: ', message_dict)
+            threading.Thread(target = reply_request, args = (conn, message_dict)).start()
 
 def run_server():
     server = connection.Connection(ip_address = global_definition.HOST, port = global_definition.PORT)
@@ -72,7 +55,7 @@ def run_server():
     list_of_client = []
 
     print('[STATUS] listtening...')
-    while True:    
+    while True:
         conn, addr = socket.accept()
         thread = threading.Thread(target = serve, args = (conn, addr))
         thread.start()
