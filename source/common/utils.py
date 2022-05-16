@@ -1,3 +1,7 @@
+'''
+    This file is used to define utility functions
+'''
+
 import base64
 import yaml
 import email.message
@@ -50,3 +54,9 @@ def time_in_range(start: datetime, end: datetime, x: datetime, time_format = dat
         return start <= x <= end
     else:
         return start <= x or x <= end
+
+def image_to_bytes(path):
+    with open(path, "rb") as image:
+        f = image.read()
+        b = bytearray(f)
+        return b

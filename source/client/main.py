@@ -8,6 +8,13 @@ import datetime
 
 import socket
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+sys.path.append('..')
+
+from client.MainWindow import MainWindow
+from client.ConnectDialog import ConnectDialog
+
 from common import global_definition
 from common.request import Request
 from common.data import Data
@@ -86,6 +93,21 @@ def run_client():
     recv.start()
     communicate_thread.start()
 
+def start_window(my_socket):
+    # my_socket is socket.socket instance
+    # we will pass it to constructor of MainWindow()
+    # main_window = MainWindow(my_socket)
+    main_window = MainWindow()
+    main_window.show()
+
 if __name__ == "__main__":
-    thread = threading.Thread(target=run_client, args = ())
-    thread.start()
+    # thread = threading.Thread(target=run_client, args = ())
+    # thread.start()
+    app = QtWidgets.QApplication(sys.argv)
+
+    connect_dialog = ConnectDialog()
+    connect_dialog.signals.connected.connect(start_window)
+    connect_dialog.signals.exit.connect(app.exit)
+
+    connect_dialog.show()
+    sys.exit(app.exec_())
