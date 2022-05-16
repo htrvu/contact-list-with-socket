@@ -88,8 +88,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 list_item.signals.clicked.connect(self.__show_detail)
                 layout.addWidget(list_item)
                 
-                self.ui.listScrollWrapper.setWidgetResizable(True)
-                self.ui.listScrollWrapper.setWidget(container)
+            self.ui.listScrollWrapper.setWidgetResizable(True)
+            self.ui.listScrollWrapper.setWidget(container)
+            
         else:
             self.__block_count += 1
             start = self.__block_count * 15
