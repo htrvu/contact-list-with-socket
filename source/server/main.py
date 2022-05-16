@@ -7,28 +7,50 @@ import select
 
 import socket
 
-sys.path.append('..')
+import signal
 
-import common.global_definition as global_definition
+from common import global_definition
+from common.request import Request
+from common.utils import print_color
+from common.utils import text_format
+from factory import reply_request
 
+'''
+    socket.socket, (ip address, tcp port) = socket.socket()
+'''
 
-# check timeout
+list_of_client = []
+
+def is_still_connected(sock: socket.socket):
+    try:
+        sock.sendall(b"ping")
+        return True
+    except:
+        return False
 
 def serve(conn: socket.socket, addr):
-    print(f'{addr[0]} connected')
-
+    print_color(f'{addr[0]} connected', text_format.OKGREEN)
     while True:
         try:
-            message = conn.recv(2048).decode()
-            if message:
-                print(f'[{addr[0]}]: {message}')
-                conn.send('Message received'.encode())
-            else:
-                print(f'[{addr[0]} disconnected]')
-                remove_connection(conn)
+            if is_still_connected(conn) == False:
+                print_color(f'{addr[0]} diconnected', text_format.FAIL)
+                return
+            
+            message = conn.recv(global_definition.PACKET_LIMIT_SIZE).decode()
+            request = None
+
+            try:
+                request = Request(message = message)
+            except Exception as e:
+                request = None
+                print(e)
+
+            if request != None:
+                print(request.to_string())
+                reply_thread = threading.Thread(target = reply_request, args = (conn, request))
+                reply_thread.start()
         except:
-            continue
-        time.sleep(0.1)
+            pass
 
 def remove_connection(conn):
     global list_of_client
@@ -49,16 +71,11 @@ def run_server():
     cnt = 0
     list_of_client = []
 
-    while True:
-        print('[STATUS] listtening...')
+    print('[STATUS] listtening...')
+    while True:    
         conn, addr = socket.accept()
-        list_of_client.append(conn)
-
-        print(type(conn))
-
         thread = threading.Thread(target = serve, args = (conn, addr))
         thread.start()
-        time.sleep(1)
 
 if __name__ == '__main__':
     thread = threading.Thread(target = run_server, args = ())
