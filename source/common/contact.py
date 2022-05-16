@@ -1,11 +1,41 @@
+from collections.abc import Sequence
+import os
+
+import copy
+from common.utils import base64_encode
+
 class Contact:
+
+    LARGE_IMAGE_DIR = '../data/large_image'
+    SMALL_IMAGE_DIR = '../data/small_image'
+
     def __init__(self, id, data: dict):
         self.__id = id
         self.__name = data['name']
         self.__phone_number = data['phone_number']
         self.__email = data['email']
-        self.__image = data['image']
+
+        self.__image = None
+
+        if data['image']:
+            if os.path.exists(os.path.join(Contact.SMALL_IMAGE_DIR, data['image'])):
+                with open(os.path.join(Contact.SMALL_IMAGE_DIR, data['image']), 'rb') as fp:
+                    self.__image = base64_encode(fp.read())
+            else:
+                self.__image = data['image']
         self.__bio = data['bio']
+        
+    def to_string(self):
+        data = {
+            'id' : self.__id,
+            'name': self.__name,
+            'phone_number': self.__phone_number,
+            'email': self.__email,
+            'image': self.__image,
+            'bio': self.__bio
+        }
+        
+        return str(data)
 
     def get_id(self):
         return self.__id
@@ -37,8 +67,18 @@ class Contact:
     def set_email(self, email: str):
         self.__email = email
 
-    def set_image(self, image: str):
+    def set_image(self, image: Sequence[str, dict]):
         self.__image = image
 
     def set_bio(self, bio: str):
         self.__bio = bio
+
+    def copy(self):
+        return Contact(self.__id, {
+            'name': self.__name,
+            'phone_number': self.__phone_number,
+            'email': self.__email,
+            'image': self.__image,
+            'bio': self.__bio
+        })
+        

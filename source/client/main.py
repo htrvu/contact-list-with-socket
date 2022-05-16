@@ -14,25 +14,74 @@ sys.path.append('..')
 
 from client.MainWindow import MainWindow
 from client.ConnectDialog import ConnectDialog
-import common.global_definition as global_definition
 
+from common import global_definition
+from common.request import Request
+from common.data import Data
+import json
+sample_request = []
+
+sample_request.append(Request.create_request(
+    Request.Type.UPDATE,
+    Data.Type.SINGLE_ID, 
+    'C000003'
+))
+
+
+for req in sample_request:
+    print(req.to_string())
+
+import ast
+import cv2
+import numpy as np
+
+
+def is_still_connected(sock: socket.socket):
+    try:
+        sock.sendall(b"ping")
+        return True
+    except:
+        return False
 
 def listen_for_new_message(socket: socket.socket):
     while True:
-        # 1 gói max 1bytes
-        # 4 bytes - total
-        # 
-        message = socket.recv(1024).decode()
-        print('[STATUS]: ', message)
+        header_bstr = socket.recv(4)
+
+        if header_bstr == b'ping':
+            continue
+
+        message_len = int.from_bytes(header_bstr, 'little')
+        message_len = (message_len + 1023) // 1024
+        message_str = ''
+
+        for i in range (message_len):
+            message = socket.recv(1024).decode()
+            message_str = message_str + message
+
+        jsvalue = json.dumps(message_str)
+        print(jsvalue)
 
 def communicate(socket: socket.socket):
     while True:
         message = input()
         if message.lower() == 'q':
             break
-        date_now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        message = str(date_now) + ' ' + message
         socket.send(message.encode())
+
+def send_request(socket: socket.socket, requets_message, function):
+    '''
+        Return: status (failed or successfuly)
+        Flow: send -> 
+    '''
+
+    pass
+
+def receive_response(socket: socket.socket):
+    '''
+        Return: map response data with request id (failed or successfuly)
+    ''' 
+    
+    pass
 
 def run_client():
     client = connection.Connection(ip_address = global_definition.HOST, port = global_definition.PORT)
