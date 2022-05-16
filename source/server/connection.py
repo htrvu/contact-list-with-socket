@@ -13,6 +13,14 @@ def is_valid_ip_address(ip_address):
         return False
     return True
 
+
+def is_still_connected(sock: socket.socket):
+    try:
+        sock.sendall(b"ping")
+    except:
+        return False
+    return True
+
 class Connection:
     def __init__(self, ip_address = global_definition.HOST, port = global_definition.PORT):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
