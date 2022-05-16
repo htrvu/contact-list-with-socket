@@ -83,6 +83,13 @@ class MainWindow(QtWidgets.QMainWindow):
             layout.setSpacing(0)
 
             self.__block_count = 0
+
+            # goi ham <gui request, nhan response, tra ve>, tham so la (socket, request) --> list cac dict
+            #
+            # ... (self.my_socket, ...)
+            # response_data = ham(self.my_socket, request)
+
+            # su dung json de show list
             for item in list_data[:15]:
                 list_item = ListItem(data=item)
                 list_item.signals.clicked.connect(self.__show_detail)
@@ -105,6 +112,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __show_detail(self, id):
         data = contact_data[id]
+
+        # goi ham <gui request, nhan response, tra ve>, tham so la (socket, request) --> dict
 
         # # (change here when use socket)
         byte_img = image_to_bytes(f'../data/large_image/{data["image"]}')

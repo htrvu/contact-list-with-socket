@@ -14,6 +14,9 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         MainWindow.setMinimumSize(QtCore.QSize(800, 600))
         MainWindow.setMaximumSize(QtCore.QSize(800, 600))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets/icons/contact.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("QPushButton {\n"
 "    outline: none !important; \n"
@@ -427,12 +430,12 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Contact List"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Digital Contact List"))
         self.label.setText(_translate("MainWindow", "Digital Contact List"))
         self.contactListBtn.setText(_translate("MainWindow", "Contact List"))
         self.aboutUsBtn.setText(_translate("MainWindow", "About Us"))
