@@ -33,8 +33,8 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
                 #exit()
 
         if os.path.exists(large_image_Path):
-            with open(small_image_path, 'rb') as fp:
-                small_image_b64 = base64_encode(fp.read())
+            with open(large_image_Path, 'rb') as fp:
+                large_image_b64 = base64_encode(fp.read())
 
         mini_contact = {
             'id': key,

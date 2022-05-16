@@ -7,31 +7,16 @@ sys.path.append('..')
 from client.ui_mainwindow import Ui_MainWindow
 from client.components.list_item import ListItem
 from client.components.round_label import round_QLabel
-
-from common.utils import image_to_bytes
-
-# for demo
-# 1. contact data (dictionary)
-import json
-with open('../data/contact_data.json') as f:
-    contact_data = json.load(f)
-# print(contact_data)
-
-# 2. list data (list of dictionary)
-list_data = []
-for id in contact_data.keys():
-    list_data.append({
-        'id': id,
-        'name': contact_data[id]['name'],
-        'image': contact_data[id]['image']
-    })
-    
+from client.request_handle import request_to_server, create_single_id_request, create_block_request
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, my_socket=None, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # Socket for current client
+        self.__my_socket = my_socket
 
         # Reset index of stacked widget
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -84,13 +69,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.__block_count = 0
 
-            # goi ham <gui request, nhan response, tra ve>, tham so la (socket, request) --> list cac dict
-            #
-            # ... (self.my_socket, ...)
-            # response_data = ham(self.my_socket, request)
+            # send request to server and get response
+            request = create_block_request(0)
+            response = request_to_server(self.__my_socket, request)
 
-            # su dung json de show list
-            for item in list_data[:15]:
+            for item in response['data']:
                 list_item = ListItem(data=item)
                 list_item.signals.clicked.connect(self.__show_detail)
                 layout.addWidget(list_item)
@@ -100,10 +83,15 @@ class MainWindow(QtWidgets.QMainWindow):
             
         else:
             self.__block_count += 1
-            start = self.__block_count * 15
-            end = min(start + 15, len(list_data))
 
-            for item in list_data[start:end]:
+            # send request to server and get response
+            request = create_block_request(self.__block_count)
+            response = request_to_server(self.__my_socket, request)
+
+            if not response or len(response['data']) == 0:
+                return
+
+            for item in response['data']:
                 list_item = ListItem(data=item)
                 # connect the clicked signal of list item to show detail page
                 list_item.signals.clicked.connect(self.__show_detail)
@@ -111,15 +99,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def __show_detail(self, id):
-        data = contact_data[id]
+        # send request to server and get response
+        request = create_single_id_request(id)
+        response = request_to_server(self.__my_socket, request)
+        data = response['data']
 
-        # goi ham <gui request, nhan response, tra ve>, tham so la (socket, request) --> dict
-
-        # # (change here when use socket)
-        byte_img = image_to_bytes(f'../data/large_image/{data["image"]}')
-        # self.ui.detailImg.set_img_from_bytes(byte_img)
-        round_QLabel(self.ui.detailImg, byte_img, 250)
-
+        # image
+        round_QLabel(self.ui.detailImg, data['image'], 250)
         # id
         self.ui.detailID.setText(id)
         # name
@@ -129,7 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # mail
         self.ui.detailEmail.setText(data['email'])
         # bio
-        self.ui.detailBio.setText(data['bio'] if data['bio'] else 'Hello motherfucker, hehehe hahaha, one two three. ABC DEF XGHSAD ASDA DASD asd asdas qwe q asdas da')
+        self.ui.detailBio.setText(data['bio'] if data['bio'] else 'Hello friend!')
 
         # change page index
         self.ui.stackedWidget.setCurrentIndex(2)

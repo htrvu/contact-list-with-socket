@@ -1,16 +1,14 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
 from PyQt5.QtWidgets import QLabel
+import base64
 
-def round_QLabel(obj, byte_img, size):
+def round_QLabel(obj, img_data, size):
     obj.target = QPixmap(obj.size())  
     obj.target.fill(Qt.transparent)   
 
-    # change here when use socket
-    # p = QPixmap(f'../../data/large_image/{name}').scaled(  
-    #     self.__img_size, self.__img_size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
     p = QPixmap()
-    p.loadFromData(byte_img)
+    p.loadFromData(base64.b64decode(img_data))
     p = p.scaled(size, size, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
 
     painter = QPainter(obj.target)
@@ -34,5 +32,5 @@ class RoundLabel(QLabel):
         self.setMaximumSize(size, size)
         self.setMinimumSize(size, size)
 
-    def set_img_from_bytes(self, byte_img):
-        round_QLabel(self, byte_img, self.__img_size)
+    def set_img_from_b64str(self, img_data):
+        round_QLabel(self, img_data, self.__img_size)

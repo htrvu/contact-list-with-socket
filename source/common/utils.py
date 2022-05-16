@@ -26,6 +26,7 @@ class text_format:
     UNDERLINE = ['\033[4m', '']
     NORMAL = ['','']
     DEBUG = ['\033[91m', '[DEBUG]: ']
+    CLOSE = ['\033[91m', '']
 
 def load_config(config_file):
     with open(config_file, 'r') as f:
@@ -51,9 +52,3 @@ def time_in_range(start: datetime, end: datetime, x: datetime, time_format = dat
         return start <= x <= end
     else:
         return start <= x or x <= end
-
-def image_to_bytes(path):
-    with open(path, "rb") as image:
-        f = image.read()
-        b = bytearray(f)
-        return b

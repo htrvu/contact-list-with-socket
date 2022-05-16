@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QLabel, QLayout, QHBoxLayout, QSpacerItem
 
 from client.components.my_frame import MyFrame
 from client.components.round_label import RoundLabel
-from common.utils import image_to_bytes
 
 class ListItem(MyFrame):
     def __init__(self, data, parent=None):
@@ -55,8 +54,4 @@ class ListItem(MyFrame):
         self.setWhatsThis(data['id'])
         self.__id.setText(data['id'])
         self.__name.setText(data['name'])
-        
-        # (change here when use socket)
-        byte_img = image_to_bytes(f'../data/small_image/{data["image"]}')
-
-        self.__img.set_img_from_bytes(byte_img)
+        self.__img.set_img_from_b64str(img_data=data['image'])

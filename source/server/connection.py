@@ -1,5 +1,5 @@
 import socket
-import sys, os
+import sys
 import ipaddress
 
 sys.path.append('..')
@@ -20,6 +20,7 @@ def is_still_connected(sock: socket.socket):
     except:
         return False
     return True
+
 
 class Connection:
     def __init__(self, ip_address = global_definition.HOST, port = global_definition.PORT):

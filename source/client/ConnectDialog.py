@@ -10,10 +10,10 @@ sys.path.append('..')
 from client.ui_connectdialog import Ui_ConnectDialog
 from client.components.my_messagebox import MyMessageBox
 
+from client.connection import Connection
 
 class ConnectSignals(QObject):
-    # connected = pyqtSignal(socket.socket)
-    connected = pyqtSignal(str)
+    connected = pyqtSignal(socket.socket)
     exit = pyqtSignal()
 
 
@@ -35,27 +35,21 @@ class ConnectDialog(QtWidgets.QDialog):
 
     def __connect_btn_clicked(self):
         host = self.ui.hostIP.text()
-        port = self.ui.hostPort.text()
+        port = int(self.ui.hostPort.text())
 
-        # make connection
-        # if thanh cong:
-        # ...
-        # else:
-            # bao loi
-
-        # jus demo
-        if host != '127.0.0.1':
-            self.__show_error_msg('Can\'t connect to Server!')
-        else:
-            self.signals.connected.emit(host + '_' + port)
+        try:
+            conn = Connection(host, port)
+            my_socket = conn.get_socket()
+            self.signals.connected.emit(my_socket)
             self.close()
+        except:
+            self.__show_error_msg('Could not connect to server')
 
     def __exit_btn_clicked(self):
         self.signals.exit.emit()
         self.close()
 
     def __show_error_msg(self, msg):
-        # qmessagebox for msg
         msg_box = MyMessageBox(self)        
         msg_box.setStyleSheet("QMessageBox {background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #acb6e5,  stop:1 #86fde8); } QLabel {color: #2d1299; font-size: 20px; font-weight: bold;}")
 
