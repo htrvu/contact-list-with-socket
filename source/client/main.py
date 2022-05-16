@@ -8,6 +8,13 @@ import datetime
 
 import socket
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+sys.path.append('..')
+
+from client.MainWindow import MainWindow
+from client.ConnectDialog import ConnectDialog
+
 from common import global_definition
 from common.utils import print_color, text_format
 from client_request_handle import create_single_id_request, create_block_request
@@ -57,11 +64,29 @@ def request_to_server(appsocket: socket.socket, request: dict):
 
     return response_data
 
+# if __name__ == "__main__":
+#     cnnection = connection.Connection(global_definition.HOST, global_definition.PORT)
+#     appsocket = cnnection.get_socket()
+#     request = create_block_request(0)
+#     data = request_to_server(appsocket, request)
+#     print(len(data['data']))
+
+
+def start_window(my_socket):
+    # my_socket is socket.socket instance
+    # we will pass it to constructor of MainWindow()
+    # main_window = MainWindow(my_socket)
+    main_window = MainWindow()
+    main_window.show()
+
 if __name__ == "__main__":
-    cnnection = connection.Connection(global_definition.HOST, global_definition.PORT)
-    appsocket = cnnection.get_socket()
-    request = create_block_request(0)
-    data = request_to_server(appsocket, request)
-    print(len(data['data']))
+    # thread = threading.Thread(target=run_client, args = ())
+    # thread.start()
+    app = QtWidgets.QApplication(sys.argv)
 
+    connect_dialog = ConnectDialog()
+    connect_dialog.signals.connected.connect(start_window)
+    connect_dialog.signals.exit.connect(app.exit)
 
+    connect_dialog.show()
+    sys.exit(app.exec_())
