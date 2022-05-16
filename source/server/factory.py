@@ -29,9 +29,11 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
         if os.path.exists(small_image_path):
             with open(small_image_path, 'rb') as fp:
                 small_image_b64 = base64_encode(fp.read())
+                #print('[DEBUG]: ', small_image_b64)
+                #exit()
 
-        if os.path.exists(large_image_Path, 'rb'):
-            with open(small_image_path) as fp:
+        if os.path.exists(large_image_Path):
+            with open(small_image_path, 'rb') as fp:
                 small_image_b64 = base64_encode(fp.read())
 
         mini_contact = {
@@ -44,7 +46,7 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
             'id': key,
             'name': jsvalue[key]['name'],
             'image': large_image_b64,
-            'phone_numer': jsvalue[key]['phone_numer'],
+            'phone_number': jsvalue[key]['phone_number'],
             'email': jsvalue[key]['email'],
             'bio': jsvalue[key]['bio']
         }
@@ -60,7 +62,7 @@ def create_response(request: dict):
         if block_id == -1:
             response_data = {
                 'status': 'ok',
-                'type' : 'block',
+                'dtype' : 'block',
                 'block_id': block_id,
                 'data': contact_list
             }
@@ -72,7 +74,7 @@ def create_response(request: dict):
             if left < right:
                 response_data = {
                     'status': 'ok',
-                    'type' : 'block',
+                    'dtype' : 'block',
                     'block_id': block_id,
                     'data': contact_list[left:right]
                 }
@@ -82,7 +84,7 @@ def create_response(request: dict):
         if id in contact_dict:
             response_data = {
                 'status': 'ok',
-                'type': RequestType.SINGLE_ID,
+                'dtype': RequestType.SINGLE_ID,
                 'data': contact_dict[id]
             }
         else:
@@ -97,7 +99,7 @@ def create_response(request: dict):
 def reply_request(appsocket: socket.socket, request: dict):
     message_to_send = str(create_response(request)).encode()
     message_len = len(message_to_send).to_bytes(4, 'little')
-    
+    print('[DEBUG], ', len(message_to_send))
     try:
         if not is_still_connected(appsocket):
             appsocket.close()
@@ -106,5 +108,5 @@ def reply_request(appsocket: socket.socket, request: dict):
         appsocket.send(message_len)
         appsocket.send(message_to_send)
         print_color('Packet sent', text_format.OKGREEN)
-    except socket.error as err:
+    except Exception as err:
         print_color(err, text_format.FAIL)

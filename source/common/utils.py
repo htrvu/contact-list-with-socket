@@ -2,9 +2,6 @@ import base64
 import yaml
 import email.message
 import datetime
-from io import StringIO
-from PIL import Image
-import cv2
 
 def base64_decode(str):
     str = base64.b64decode(str)
