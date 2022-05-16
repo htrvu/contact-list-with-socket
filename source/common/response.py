@@ -6,18 +6,13 @@
         - response ID (...) ~ request ID: which request to response
 '''
 
-from data import Data
-import global_definition
+from common.data import Data
+from common import global_definition
 
 class Response:
-    def __init__(self, address: str, data : Data, request_id: str, send_from = (global_definition.HOST, global_definition.PORT)):
-        self.__send_to = address
+    def __init__(self, data : Data, request_id: str):
         self.__data = data
         self.__request_id = request_id
-        self.__send_from = send_from
-    
-    def get_destination_address(self):
-        return self.__send_to
     
     def get_data(self):
         return self.__data
@@ -25,8 +20,6 @@ class Response:
     def get_request_id(self):
         return self.__request_id
     
-    def get_source_address(self):
-        return self.__send_from
 
     def update(self):
         '''

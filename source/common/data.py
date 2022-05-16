@@ -11,7 +11,6 @@
                 bio: str
             }
 
-
         block of contacts:
             block_id: id (int),
             block_data: {
@@ -20,6 +19,8 @@
                 single_contact_3
                 ...
             }
+        
+        large_image: 
         
         full list of contact have the same type with block of contacts with block_id = -1
 '''
@@ -30,6 +31,7 @@ class Data:
     class Type:
         SINGLE_ID = '[__SINGLE_ID__]'
         BY_BLOCK = '[__BY_BLOCK__]'
+        LARGE_IMAGE = '[__LARGE_IMAGE__]'
 
     def __init__(self, type: Type, data: dict):
         self.__data = {}

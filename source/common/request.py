@@ -1,33 +1,47 @@
-'''
-    This file is used to handle request from client
-    The information of a request contains:
-        - IP address: send from?
-        - Request ID (...)
-        - Reqetst for what [id, block]?
-        - Value of id or block
-    
-    Sample: "[__GET__] 123123 [__SINGLE_ID__] U000001"
-'''
+from pkg_resources import require
+from common.data import Data
+import common.global_definition as global_definition
 
-import global_definition
-from data import Data
+import random
+
 
 class Request:
     class Type:
         GET = '[__GET__]'
-        UPDATE = '[__UPDATE__]' # ... 
+        UPDATE = '[__UPDATE__]'
 
-    def __init__(self, send_from, message, send_to = (global_definition.HOST, global_definition.PORT)):
+    def __init__(self, message):
+
+        self.__request_type = str
+        self.__request_id = str
+        self.__data_type = str
+        self.__index = str
+
         message = Request.parse_message(message)
-        
+
         self.__request_type = message['request_type']
         self.__request_id = message['request_id']
         self.__data_type = message['data_type']
         self.__index = message['index']
 
-        self._source_address = send_from
-        self._destination_address = send_to
+    def create_request(request_type, data_type: str, index, request_id: int = random.randint(0, 1 << 32)):
+        if request_type not in [Request.Type.GET, Request.Type.UPDATE]:
+            raise ValueError('Request type not correct')
 
+        if data_type not in [Data.Type.SINGLE_ID, Data.Type.BY_BLOCK]:
+            raise ValueError('Data type not correct')
+
+        request = Request(f'{request_type} {request_id} {data_type} {index}')
+        return request
+
+    def to_string(self):
+        return f'{self.__request_type} {self.__request_id} {self.__data_type} {self.__index}'
+
+    def get_index(self):
+        return self.__index
+
+    def get_request_id(self):
+        return self.__request_id
 
     def get_request_type(self):
         return self.__request_type
@@ -35,29 +49,22 @@ class Request:
     def get_data_type(self):
         return self.__data_type
 
-    def get_source_address(self):
-        return self.__source_address
-    
-    def get_destination_address(self):
-        return self.__destination_address
-
     def parse_message(message: str):
         messarray = message.strip().split(' ')
-
-        if (len(messarray)):
+        if (len(messarray) != 4):
             raise Exception('Request wrong format')
 
         if (messarray[0] not in [Request.Type.GET, Request.Type.UPDATE]):
             raise ValueError('Invalid request type')
 
-        if (message[1] not in [Data.Type.BY_BLOCK, Data.Type.SINGLE_ID]):
+        if (messarray[2] not in [Data.Type.BY_BLOCK, Data.Type.SINGLE_ID]):
             raise ValueError('Invalid query request')
  
         return {
             'request_type': messarray[0],
-            'request_id': message[1],
+            'request_id': messarray[1],
             'data_type': messarray[2],
-            'index': int(message[3]) # id is the block id or id of any contact 
+            'index': messarray[3] # id is the block id or id of any contact 
         }
 
 class HandleRequest:
