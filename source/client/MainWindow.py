@@ -1,3 +1,4 @@
+import re
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 import sys
@@ -102,6 +103,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # send request to server and get response
         request = create_single_id_request(id)
         response = request_to_server(self.__my_socket, request)
+
         data = response['data']
 
         # image
