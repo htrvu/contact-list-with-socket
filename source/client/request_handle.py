@@ -3,6 +3,9 @@ from common.utils import print_color, text_format
 import ast
 from common.request import RequestType
 
+BYTES_PER_BLOCK = 512
+
+
 def create_block_request(block_id):
     return {
         'dtype': RequestType.BLOCK,
@@ -25,10 +28,7 @@ def request_to_server(appsocket: socket.socket, request: dict):
         print_color(str(err), text_format.FAIL)
         return None
 
-    BYTES_PER_BLOCK = 1024
-    
     response_data = None
-
     while True:
         try:
             response_header = appsocket.recv(4)
@@ -37,21 +37,38 @@ def request_to_server(appsocket: socket.socket, request: dict):
                 continue
             
             response_len = int.from_bytes(response_header, 'little')
-            print('[DEBUG]: ' , response_len)
+            print('[DEBUG]: bytes len =' , response_len)
 
-            message_block_count = (response_len + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
+            # message_block_count = (response_len + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
 
-            response_data_str = ''
-            mess = ''
-            for i in range(message_block_count):
+            # response_data_str = ''
+            # mess = ''
+            # for i in range(message_block_count):
+            #     try:
+            #         mess = appsocket.recv(BYTES_PER_BLOCK).decode('utf-8')
+            #         response_data_str = response_data_str + mess
+            #     except Exception as e:
+            #         pass
+            # response_data = ast.literal_eval(response_data_str)
+
+            response_bytes = b''
+            cur_len = 0
+            while True:
                 try:
-                    mess = appsocket.recv(BYTES_PER_BLOCK).decode('utf-8')
-                    response_data_str = response_data_str + mess
+                    part = appsocket.recv(min(BYTES_PER_BLOCK, response_len - cur_len))
+                    response_bytes += part
+                    cur_len += len(part)
+
+                    if cur_len == response_len:
+                        break
                 except Exception as e:
                     pass
+
+            response_str = response_bytes.decode('utf-8')
+            print('[DEBUG]: actual len=', len(response_str))
+
+            response_data = ast.literal_eval(response_str)
             
-            # print(response_data_str[-100:])
-            response_data = ast.literal_eval(response_data_str)
             break
         except Exception as e:
             return # do something
