@@ -1,5 +1,4 @@
-import re
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 import sys
 

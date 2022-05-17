@@ -1,10 +1,8 @@
 import socket
-import sys, os
+import sys
 import ipaddress
 
 sys.path.append('..')
-
-import common.global_definition as global_definition
 
 def is_valid_ip_address(ip_address):
     try:
@@ -14,7 +12,7 @@ def is_valid_ip_address(ip_address):
     return True
 
 class Connection:
-    def __init__(self, ip_address = global_definition.HOST, port = global_definition.PORT):
+    def __init__(self, ip_address: str, port: int):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         try:

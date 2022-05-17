@@ -1,9 +1,9 @@
 import socket
 from common.utils import print_color, text_format
 import ast
-from common.request import RequestType
+from common.request_type import RequestType
 
-BYTES_PER_BLOCK = 512
+from client.constants import *
 
 
 def create_block_request(block_id):
@@ -39,18 +39,6 @@ def request_to_server(appsocket: socket.socket, request: dict):
             response_len = int.from_bytes(response_header, 'little')
             print('[DEBUG]: bytes len =' , response_len)
 
-            # message_block_count = (response_len + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
-
-            # response_data_str = ''
-            # mess = ''
-            # for i in range(message_block_count):
-            #     try:
-            #         mess = appsocket.recv(BYTES_PER_BLOCK).decode('utf-8')
-            #         response_data_str = response_data_str + mess
-            #     except Exception as e:
-            #         pass
-            # response_data = ast.literal_eval(response_data_str)
-
             response_bytes = b''
             cur_len = 0
             while True:
@@ -68,7 +56,7 @@ def request_to_server(appsocket: socket.socket, request: dict):
             print('[DEBUG]: actual len=', len(response_str))
 
             response_data = ast.literal_eval(response_str)
-            
+
             break
         except Exception as e:
             return # do something
