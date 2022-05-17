@@ -24,8 +24,7 @@ from factory import reply_request
 list_of_client = []
 
 def serve(conn: socket.socket, addr):
-    print_color(f'{addr[0]} connected', text_format.OKGREEN)
-
+    print_color(f'{addr} connected', text_format.OKGREEN)
     while True:
         if conn.fileno() == -1:
             print_color(f'{addr[0]} connected', text_format.OKBLUE)
@@ -35,7 +34,7 @@ def serve(conn: socket.socket, addr):
 
         if message:
             if message == b'byebye':
-                print_color(f'{addr[0]} disconnected', text_format.CLOSE)
+                print_color(f'{addr} disconnected', text_format.CLOSE)
                 conn.close()
                 break
             else:
