@@ -4,14 +4,13 @@ import json
 
 sys.path.append('..')
 
-from common.request import RequestType
+from common.request_type import RequestType
 from common.utils import base64_encode
 from common.utils import print_color, text_format
 from connection import is_still_connected
 
-CONTACT_FILE_PATH = '../data/contact_data.json'
-LARGE_IMAGE_DIR = '../data/large_image'
-SMALL_IMAGE_DIR = '../data/small_image'
+from server.constants import *
+
 
 contact_list = []
 contact_dict = {}

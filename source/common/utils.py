@@ -3,8 +3,6 @@
 '''
 
 import base64
-import yaml
-import email.message
 import datetime
 
 def base64_decode(str):
@@ -27,10 +25,6 @@ class text_format:
     NORMAL = ['','']
     DEBUG = ['\033[91m', '[DEBUG]: ']
     CLOSE = ['\033[91m', '']
-
-def load_config(config_file):
-    with open(config_file, 'r') as f:
-        return yaml.safe_load(f)
 
 def print_color(message, option = text_format.NORMAL, end = '\n'):
     print(f'{option[0]}{option[1]}{message} {text_format.ENDC[0]}', end = end)
