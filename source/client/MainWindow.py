@@ -8,7 +8,7 @@ from client.ui_mainwindow import Ui_MainWindow
 from client.components.list_item import ListItem
 from client.components.round_label import round_QLabel
 from client.request_handle import request_to_server, create_single_id_request, create_block_request
-import threading
+from client.components.my_messagebox import MyMessageBox
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, my_socket=None, parent=None):
@@ -56,11 +56,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def __contact_list_btn_clicked(self):
-        self.ui.stackedWidget.setCurrentIndex(1)
-        self.__show_contact_list()
+        self.ui.listScrollWrapper.setWidget(None)
+        status = self.__show_contact_list()
 
-    def __disconnect_to_server(self):
-        pass
+        if not status:
+            MyMessageBox('Failed to get contact list from Server!', self).exec_()
+            return
+
+        self.ui.stackedWidget.setCurrentIndex(1)
+        
 
     def __show_contact_list(self, show_more=False):
         if not show_more:
@@ -77,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
             response = request_to_server(self.__my_socket, request)
 
             if not response:
-                return
+                return False
 
             for item in response['data']:
                 list_item = ListItem(data=item)
@@ -94,21 +98,30 @@ class MainWindow(QtWidgets.QMainWindow):
             request = create_block_request(self.__block_count)
             response = request_to_server(self.__my_socket, request)
 
-            if not response or len(response['data']) == 0:
-                self.__block_count -= 1
-                return
+            if not response:
+                return False
 
-            for item in response['data']:
-                list_item = ListItem(data=item)
-                # connect the clicked signal of list item to show detail page
-                list_item.signals.clicked.connect(self.__show_detail)
-                self.ui.listScrollWrapper.widget().layout().addWidget(list_item)    
+            if len(response['data']) > 0:
+                for item in response['data']:
+                    list_item = ListItem(data=item)
+                    # connect the clicked signal of list item to show detail page
+                    list_item.signals.clicked.connect(self.__show_detail)
+                    self.ui.listScrollWrapper.widget().layout().addWidget(list_item)    
+            else:
+                self.__block_count -= 1
+
+        return True
 
 
     def __show_detail(self, id):
         # send request to server and get response
         request = create_single_id_request(id)
         response = request_to_server(self.__my_socket, request)
+
+        if not response:
+            # show message
+            MyMessageBox('Failed to get contact detail form Server!', self).exec_()
+            return
 
         data = response['data']
 

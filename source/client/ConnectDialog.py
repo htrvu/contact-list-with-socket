@@ -50,31 +50,5 @@ class ConnectDialog(QtWidgets.QDialog):
         self.close()
 
     def __show_error_msg(self, msg):
-        msg_box = MyMessageBox(self)        
-        msg_box.setStyleSheet("QMessageBox {background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #acb6e5,  stop:1 #86fde8); } QLabel {color: #2d1299; font-size: 20px; font-weight: bold;}")
-
-        btn = msg_box.addButton(MyMessageBox.Ok)
-        btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-
-        btn.setStyleSheet('''
-QPushButton {
-	background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #2d1299,  stop:1 #2980b9);
-	padding: 4px 16px;
-	font-size: 18px;
-    font-weight: bold;
-	color: #fff;
-	border: none;
-	border-radius: 12px;
-	outline: none;
-}
-
-QPushButton:hover {
-	background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #8e2de2,  stop:1 #4a00e0);
-}
-        ''')
-        
-        msg_box.setText(msg)
-        msg_box.setWindowTitle('Error Message')
-        msg_box.setWindowIcon(QtGui.QIcon('./assets/icons/contact.png'))
-        msg_box.exec_()
+        MyMessageBox(msg, self).exec_()
 
