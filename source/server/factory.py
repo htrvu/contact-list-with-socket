@@ -70,16 +70,19 @@ def create_response(request: dict):
             right = min(left + blocksize, len(contact_list))
 
             if left < right:
-                response_data = {
-                    'status': 'ok',
-                    'dtype' : 'block',
-                    'block_id': block_id,
-                    'data': contact_list[left:right]
-                }
+                data = contact_list[left:right]
+            else:
+                data = []
+
+            response_data = {
+                'status': 'ok',
+                'dtype' : 'block',
+                'block_id': block_id,
+                'data': data
+            }
 
     elif request['dtype'] == RequestType.SINGLE_ID:
         id = request['id']
-        # print('[DEBUG]: id detail:', id)
         if id in contact_dict:
             response_data = {
                 'status': 'ok',
