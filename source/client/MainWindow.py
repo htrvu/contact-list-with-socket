@@ -8,6 +8,7 @@ from client.ui_mainwindow import Ui_MainWindow
 from client.components.list_item import ListItem
 from client.components.round_label import round_QLabel
 from client.request_handle import request_to_server, create_single_id_request, create_block_request
+import threading
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, my_socket=None, parent=None):
@@ -58,6 +59,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(1)
         self.__show_contact_list()
 
+    def __disconnect_to_server(self):
+        pass
 
     def __show_contact_list(self, show_more=False):
         if not show_more:
@@ -72,6 +75,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # send request to server and get response
             request = create_block_request(0)
             response = request_to_server(self.__my_socket, request)
+
+            if not response:
+                return
 
             for item in response['data']:
                 list_item = ListItem(data=item)
@@ -89,6 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
             response = request_to_server(self.__my_socket, request)
 
             if not response or len(response['data']) == 0:
+                self.__block_count -= 1
                 return
 
             for item in response['data']:

@@ -23,21 +23,24 @@ def request_to_server(appsocket: socket.socket, request: dict):
     request = str(request).encode()
     
     try:
-        appsocket.send(request)
-    except Exception as err:
+        appsocket.sendall(request)
+    except socket.error as err:
         print_color(str(err), text_format.FAIL)
         return None
 
     response_data = None
+
     while True:
         try:
+            # appsocket.close() 
+            # break
             response_header = appsocket.recv(4)
             
             if response_header == b'ping':
                 continue
             
             response_len = int.from_bytes(response_header, 'little')
-            print('[DEBUG]: bytes len =' , response_len)
+            print_color(f'Packet size: {response_len} (bytes)', text_format.OKGREEN)
 
             response_bytes = b''
             cur_len = 0
@@ -49,16 +52,15 @@ def request_to_server(appsocket: socket.socket, request: dict):
 
                     if cur_len == response_len:
                         break
-                except Exception as e:
-                    pass
+
+                except socket.timeout as err:
+                    print_color(str(err), text_format.FAIL)
+                    break
 
             response_str = response_bytes.decode('utf-8')
-            print('[DEBUG]: actual len=', len(response_str))
-
             response_data = ast.literal_eval(response_str)
-
             break
-        except Exception as e:
-            return # do something
+        except socket.error as err:
+            print_color(str(err), text_format.FAIL)
 
     return response_data

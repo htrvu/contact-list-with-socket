@@ -104,8 +104,26 @@ def reply_request(appsocket: socket.socket, request: dict):
             appsocket.close()
             return
         
-        appsocket.send(message_len)
-        appsocket.send(message_to_send)
+        appsocket.sendall(message_len)
+
+        length_int = int.from_bytes(message_len, 'little')
+        count = (length_int + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
+        
+        for i in range(count):
+            appsocket.sendall(message_to_send[i * BYTES_PER_BLOCK: min(length_int, (i + 1) * BYTES_PER_BLOCK)])
+
         print_color(f'Packet sent to {appsocket.getpeername()}', text_format.OKGREEN)
     except Exception as err:
         print_color(err, text_format.FAIL)
+
+
+def send(socket: socket.socket, data: dict):
+    data = str(data).encode()
+    length = len(data).to_bytes(4, 'little')
+    socket.sendall(length)
+    socket.sendall(data)
+
+def receive(socket: socket.socket):
+    len = int.from_bytes(socket.recv(4), 'little')
+    data = socket.recv(len).decode()
+    return json.loads(data)
