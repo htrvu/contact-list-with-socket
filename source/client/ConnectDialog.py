@@ -31,11 +31,13 @@ class ConnectDialog(QtWidgets.QDialog):
         self.ui.connectBtn.clicked.connect(self.__connect_btn_clicked)
         self.ui.exitBtn.clicked.connect(self.__exit_btn_clicked)
 
-        # self.show()
-
     def __connect_btn_clicked(self):
         host = self.ui.hostIP.text()
         port = int(self.ui.hostPort.text())
+
+        if host == '' or port == '':
+            self.__show_error_msg('Please input host IP and port.')
+            return
 
         try:
             conn = Connection(host, port)
@@ -43,7 +45,7 @@ class ConnectDialog(QtWidgets.QDialog):
             self.signals.connected.emit(my_socket)
             self.close()
         except:
-            self.__show_error_msg('Could not connect to server')
+            self.__show_error_msg('Could not connect to server!')
 
     def __exit_btn_clicked(self):
         self.signals.exit.emit()

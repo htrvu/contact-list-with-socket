@@ -32,7 +32,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __infinite_scroll(self, value):
         if value == self.ui.listScrollWrapper.verticalScrollBar().maximum():
-            self.__show_contact_list(show_more=True)
+            status = self.__show_contact_list(show_more=True)
+            if not status:
+                MyMessageBox('Failed to get more contact list from Server!', self).exec_()
 
 
     def __stacked_index_slots(self, index):
@@ -64,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.ui.stackedWidget.setCurrentIndex(1)
-        
+
 
     def __show_contact_list(self, show_more=False):
         if not show_more:
@@ -136,7 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # mail
         self.ui.detailEmail.setText(data['email'])
         # bio
-        self.ui.detailBio.setText(data['bio'] if data['bio'] else 'Hello friend!')
+        self.ui.detailBio.setText(data['bio'] if data['bio'] else 'Hello friend\u2019!')
 
         # change page index
         self.ui.stackedWidget.setCurrentIndex(2)
