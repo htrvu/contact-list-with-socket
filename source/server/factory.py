@@ -106,12 +106,13 @@ def reply_request(appsocket: socket.socket, request: dict):
         
         appsocket.sendall(message_len)
 
-        length_int = int.from_bytes(message_len, 'little')
-        count = (length_int + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
+        # length_int = int.from_bytes(message_len, 'little')
+        # count = (length_int + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
         
-        for i in range(count):
-            appsocket.sendall(message_to_send[i * BYTES_PER_BLOCK: min(length_int, (i + 1) * BYTES_PER_BLOCK)])
+        # for i in range(count):
+        #     appsocket.send(message_to_send[i * BYTES_PER_BLOCK: min(length_int, (i + 1) * BYTES_PER_BLOCK)])
 
+        appsocket.sendall(message_to_send)
         print_color(f'Packet sent to {appsocket.getpeername()}', text_format.OKGREEN)
     except Exception as err:
         print_color(err, text_format.FAIL)
