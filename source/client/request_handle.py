@@ -32,15 +32,13 @@ def request_to_server(appsocket: socket.socket, request: dict):
 
     while True:
         try:
-            # appsocket.close() 
-            # break
             response_header = appsocket.recv(4)
             
             if response_header == b'ping':
                 continue
             
             response_len = int.from_bytes(response_header, 'little')
-            print_color(f'Packet size: {response_len} (bytes)', text_format.OKGREEN)
+            print_color(f'Packet received size: {response_len} (bytes)', text_format.OKGREEN)
 
             response_bytes = b''
             cur_len = 0
