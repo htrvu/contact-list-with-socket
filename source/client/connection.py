@@ -14,7 +14,7 @@ def is_valid_ip_address(ip_address):
 class Connection:
     def __init__(self, ip_address: str, port: int):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+        
         try:
             self.client.connect((ip_address, port))
         except:

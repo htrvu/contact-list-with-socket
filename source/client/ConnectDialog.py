@@ -33,12 +33,17 @@ class ConnectDialog(QtWidgets.QDialog):
 
     def __connect_btn_clicked(self):
         host = self.ui.hostIP.text()
-        port = int(self.ui.hostPort.text())
+        port_str = self.ui.hostPort.text()
 
-        if host == '' or port == '':
-            self.__show_error_msg('Please input host IP and port.')
+        if not host or not port_str:
+            self.__show_error_msg('Please enter host IP and port!')
             return
 
+        if not port_str.isdigit():
+            self.__show_error_msg('Port must be a number!')
+            return
+
+        port = int(port_str)
         try:
             conn = Connection(host, port)
             my_socket = conn.get_socket()
@@ -52,5 +57,5 @@ class ConnectDialog(QtWidgets.QDialog):
         self.close()
 
     def __show_error_msg(self, msg):
-        MyMessageBox(msg, self).exec_()
+        MyMessageBox(msg, [], self).exec_()
 

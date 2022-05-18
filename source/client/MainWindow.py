@@ -2,6 +2,8 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 import sys
 
+import socket
+
 sys.path.append('..')
 
 from client.ui_mainwindow import Ui_MainWindow
@@ -10,14 +12,18 @@ from client.components.round_label import round_QLabel
 from client.request_handle import request_to_server, create_single_id_request, create_block_request
 from client.components.my_messagebox import MyMessageBox
 
+from common.utils import print_color, text_format
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, my_socket=None, parent=None):
+    def __init__(self, my_socket: socket.socket = None, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
         # Socket for current client
         self.__my_socket = my_socket
+        self.__server_ip, self.__server_port = my_socket.getpeername()
+
+        # print(self.__my_socket.getpeername())
 
         # Reset index of stacked widget
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -34,7 +40,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if value == self.ui.listScrollWrapper.verticalScrollBar().maximum():
             status = self.__show_contact_list(show_more=True)
             if not status:
-                MyMessageBox('Failed to get more contact list from Server!', self).exec_()
+                self.__show_error_msg('Failed to get more contact list from Server!')
+                # MyMessageBox('Failed to get more contact list from Server!', self).exec_()
 
 
     def __stacked_index_slots(self, index):
@@ -62,7 +69,8 @@ class MainWindow(QtWidgets.QMainWindow):
         status = self.__show_contact_list()
 
         if not status:
-            MyMessageBox('Failed to get contact list from Server!', self).exec_()
+            self.__show_error_msg('Failed to get contact list from Server!')
+            # MyMessageBox('Failed to get contact list from Server!', self).exec_()
             return
 
         self.ui.stackedWidget.setCurrentIndex(1)
@@ -122,7 +130,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not response:
             # show message
-            MyMessageBox('Failed to get contact detail form Server!', self).exec_()
+            # MyMessageBox('Failed to get contact detail form Server!', self).exec_()
+            self.__show_error_msg('Failed to get contact detail form Server!')
             return
 
         data = response['data']
@@ -142,3 +151,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # change page index
         self.ui.stackedWidget.setCurrentIndex(2)
+
+    def __show_error_msg(self, msg):
+        message_box = MyMessageBox(msg, ['Reconnect', 'Cancel'] ,self)
+        
+        reply = message_box.exec_()
+
+        if reply == 0:
+            print_color('Reconnecting...', text_format.OKGREEN)
+            
+            self.__my_socket.close()
+            self.__my_socket = socket.socket()
+            try:
+                self.__my_socket.connect((self.__server_ip, self.__server_port))
+                print_color('Reconnected!', text_format.OKGREEN)
+                MyMessageBox('Reconnected successfully!', [], self).exec_()
+            except:
+                print_color('Failed to reconnect!', text_format.FAIL)
+                MyMessageBox('Failed to reconnect!', [], self).exec_()
+            # self.__contact_list_btn_clicked()
+        else:
+            print('Cancel')
+
