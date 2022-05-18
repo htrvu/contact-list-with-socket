@@ -13,15 +13,17 @@ def is_valid_ip_address(ip_address):
 
 class Connection:
     def __init__(self, ip_address: str, port: int):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
         try:
-            self.server.connect((ip_address, port))
+            self.client.connect((ip_address, port))
         except:
             raise Exception(f'Could not connect to {ip_address}:{port}')
 
+        self.client.settimeout(5)
+
     def get_socket(self):
-        return self.server
+        return self.client
 
     def close(self):
-        self.server.close()
+        self.client.close()
