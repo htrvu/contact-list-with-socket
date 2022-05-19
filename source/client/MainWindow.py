@@ -124,7 +124,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return True
 
-
     def __show_detail(self, id):
         # send request to server and get response
         request = create_single_id_request(id)
@@ -152,10 +151,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # change page index
         self.ui.stackedWidget.setCurrentIndex(2)
 
-
     def __show_connect_error(self, msg):
         message_box = MyMessageBox(msg, ['Reconnect', 'Cancel'] ,self)
-        
         reply = message_box.exec_()
 
         if reply == 0:
@@ -163,7 +160,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.__reconnect_threading()         
         else:
             print_color('Cancel', text_format.CLOSE)
-
 
     def __show_reconnect_msg(self, result):
         self.__dialog.close()
@@ -197,6 +193,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.__target.fail.connect(lambda: self.__show_reconnect_msg(False))
 
         self.__thread.start()
-
-    
 
