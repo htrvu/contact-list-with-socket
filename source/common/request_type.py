@@ -1,4 +1,4 @@
 class RequestType:
     BLOCK = 'block'
     SINGLE_ID = 'single_id'
-    BLOCK_SIZE = 7
+    BLOCK_SIZE = 8
