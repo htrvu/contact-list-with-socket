@@ -5,18 +5,18 @@ import sys
 
 import socket
 
-sys.path.append('..')
+from ui_mainwindow import Ui_MainWindow
+from components.list_item import ListItem
+from components.round_label import round_QLabel
+from request_handle import request_to_server, create_single_id_request, create_block_request
+from components.my_messagebox import MyMessageBox
+from components.my_dialog import MyDialog
 
-from client.ui_mainwindow import Ui_MainWindow
-from client.components.list_item import ListItem
-from client.components.round_label import round_QLabel
-from client.request_handle import request_to_server, create_single_id_request, create_block_request
-from client.components.my_messagebox import MyMessageBox
-from client.components.my_dialog import MyDialog
+from connection import ReconnectRunner
 
-from client.connection import ReconnectRunner
+from utils import print_color, text_format
 
-from common.utils import print_color, text_format
+import logging
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -45,6 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
             status = self.__show_contact_list(show_more=True)
             if not status:
                 self.__show_connect_error('Failed to get more contact list from Server!')
+                logging.log('[ERROR] Failed to get more contact list from Server!')
 
 
     def __stacked_index_slots(self, index):
@@ -73,6 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not status:
             self.__show_connect_error('Failed to get contact list from Server!')
+            logging.log('[ERROR] Failed to get contact list from Server!')
             return
 
         self.ui.stackedWidget.setCurrentIndex(1)
@@ -131,6 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not response:
             self.__show_connect_error('Failed to get contact detail from Server!')
+            logging.log('[ERROR] Failed to get contact detail from Server!')
             return
 
         data = response['data']
@@ -157,20 +160,32 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if reply == 0:
             print_color('Reconnecting...', text_format.OKGREEN)
+            logging.log(f'[STATUS] Reconnecting to {self.__server_ip}:{self.__server_port}')
             self.__reconnect_threading()         
         else:
             print_color('Cancel', text_format.CLOSE)
+            logging.log(f'[STATUS] Reconnect canceled')
 
     def __show_reconnect_msg(self, result):
         self.__dialog.close()
         
         if result:
-            print_color('Reconnected!', text_format.OKGREEN)
+            print_color('Reconnected successfully!!', text_format.OKGREEN)
+            logging.log('[STATUS] Reconnected successfully!')
             MyMessageBox('Reconnected successfully!', [], self).exec_()
         else:
             print_color('Failed to reconnect!', text_format.FAIL)
+            logging.log('[STATUS] Failed to reconnect!')
             MyMessageBox('Failed to reconnect!', [], self).exec_()
 
+    def closeEvent(self, event):
+        logging.log('[STATUS] Close connection with server')
+        self.__my_socket.send('close_connection')
+        self.__my_socket.close()
+        super(MainWindow, self).closeEvent(event)
+        logging.log('[STATUS] Application closed')
+        
+            
 
     def __reconnect_threading(self):
         # close current socket

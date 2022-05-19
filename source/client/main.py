@@ -1,30 +1,29 @@
 import sys
+import time
+
+import threading
 
 from PyQt5 import QtWidgets
 
-sys.path.append('..')
-
-from client.MainWindow import MainWindow
-from client.ConnectDialog import ConnectDialog
-
-client_socket = None
+from MainWindow import MainWindow
+from ConnectDialog import ConnectDialog
+import logging
 
 def start_window(my_socket):
-    global client_socket
-    client_socket = my_socket
-    main_window = MainWindow(client_socket)
+    main_window = MainWindow(my_socket)
     main_window.show()
 
-
-def close_socket(my_socket):
-    try:
-        my_socket.send(b'byebye')
-        my_socket.close()
-    except:
-        pass
-    
+def logging_thread(log_file_path):
+    logging.set_log_file_path(log_file_path)
+    while True:
+        logging.save()
+        time.sleep(5)
 
 if __name__ == "__main__":
+
+    save_log_thread = threading.Thread(target = logging_thread, args = ('./client.log', ))
+    save_log_thread.start()
+
     app = QtWidgets.QApplication(sys.argv)
 
     connect_dialog = ConnectDialog()
@@ -34,7 +33,4 @@ if __name__ == "__main__":
     connect_dialog.show()
 
     exit_code = app.exec_()
-    if client_socket:
-        close_socket(client_socket)
-
     sys.exit(exit_code)
