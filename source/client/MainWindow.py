@@ -1,8 +1,11 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 import sys
 
 import socket
+
+import concurrent.futures
 
 sys.path.append('..')
 
@@ -11,6 +14,29 @@ from client.components.list_item import ListItem
 from client.components.round_label import round_QLabel
 from client.request_handle import request_to_server, create_single_id_request, create_block_request
 from client.components.my_messagebox import MyMessageBox
+
+import threading
+
+
+is_reconnecting = False
+
+def reconnect(appsocket: socket.socket, address):
+    global is_reconnecting
+
+    if is_reconnecting:
+        return
+
+    ret_val = True
+    is_reconnecting = True
+    try:
+        appsocket.connect(address)
+    except:
+        ret_val = False
+
+    is_reconnecting = False
+
+    return ret_val
+
 
 from common.utils import print_color, text_format
 class MainWindow(QtWidgets.QMainWindow):
@@ -122,7 +148,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return True
 
-
     def __show_detail(self, id):
         # send request to server and get response
         request = create_single_id_request(id)
@@ -153,23 +178,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(2)
 
     def __show_error_msg(self, msg):
-        message_box = MyMessageBox(msg, ['Reconnect', 'Cancel'] ,self)
-        
+        global is_reconnecting
+
+        if is_reconnecting:
+            return
+
+        message_box = MyMessageBox(msg, ['Reconnect', 'Cancel'], self)
         reply = message_box.exec_()
 
         if reply == 0:
             print_color('Reconnecting...', text_format.OKGREEN)
-            
             self.__my_socket.close()
             self.__my_socket = socket.socket()
-            try:
-                self.__my_socket.connect((self.__server_ip, self.__server_port))
-                print_color('Reconnected!', text_format.OKGREEN)
-                MyMessageBox('Reconnected successfully!', [], self).exec_()
-            except:
-                print_color('Failed to reconnect!', text_format.FAIL)
-                MyMessageBox('Failed to reconnect!', [], self).exec_()
-            # self.__contact_list_btn_clicked()
+
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(reconnect, self.__my_socket, (self.__server_ip, self.__server_port))
+                res = future.result()
+                message_box = None
+
+                if res:
+                    message_box = MyMessageBox(f'Reconnected to {self.__server_ip}:{self.__server_port} successfully!', ['OK'], self)
+                    print(f'[STATUS] Reconnected to {self.__server_ip}:{self.__server_port} successfully!')
+                else:
+                    message_box = MyMessageBox(f'Failed to reconnect to {self.__server_ip}:{self.__server_port}', ['OK'], self)
+                    print(f'[STATUS] Failed to reconnect to {self.__server_ip}:{self.__server_port}')
+                message_box.exec_()
+        
         else:
-            print('Cancel')
+            print('[STATUS] Cancel to reconnect')
 
