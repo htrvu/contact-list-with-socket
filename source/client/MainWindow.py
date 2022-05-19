@@ -178,6 +178,14 @@ class MainWindow(QtWidgets.QMainWindow):
             logging.log('[STATUS] Failed to reconnect!')
             MyMessageBox('Failed to reconnect!', [], self).exec_()
 
+    def closeEvent(self, event):
+        logging.log('[STATUS] Close connection with server')
+        self.__my_socket.send('close_connection')
+        self.__my_socket.close()
+        super(MainWindow, self).closeEvent(event)
+        logging.log('[STATUS] Application closed')
+        
+            
 
     def __reconnect_threading(self):
         # close current socket
