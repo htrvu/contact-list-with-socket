@@ -26,7 +26,7 @@ def serve(conn: socket.socket, addr):
             logging.log(f'[STATUS] {addr[0]} disconnected')
             break
 
-        message = conn.recv(PACKET_LIMIT_SIZE)
+        message = conn.recv(REQUEST_LIMIT_SIZE)
 
         if message:
             if message == b'byebye':
@@ -42,17 +42,17 @@ def serve(conn: socket.socket, addr):
                     print_color(f'Message as dict: {message_dict}', text_format.DEBUG)
 
                 logging.log(f'[DEBUG] Message as dict: {message_dict}')
-                threading.Thread(target = reply_request, args = (conn, message_dict)).start()
+                reply_request(conn, message_dict)
 
 def run_server():
-    print('[STATUS] initialize server')
+    print_color('[STATUS] initialize server', text_format.OKBLUE)
     logging.log('[STATUS] initialize server')
 
     server = connection.Connection(ip_address = HOST, port = PORT)
     socket = server.get_socket()
     socket.listen(100)
 
-    print('[STATUS] listtening...')
+    print_color('[STATUS] listtening...', text_format.OKBLUE)
     logging.log('[STATUS] listtening...')
 
     while True:
