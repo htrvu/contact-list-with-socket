@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QLabel, QDialogButtonBox
 
 class MyMessageBox(QMessageBox):
-    def __init__(self, msg= None, btn_titles = [], parent=None):
+    def __init__(self, msg = None, btn_titles = [], parent = None):
         super().__init__(parent)
         self.__btn_titles = btn_titles
 
@@ -52,12 +52,11 @@ class MyMessageBox(QMessageBox):
         background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #8e2de2,  stop:1 #4a00e0);
     }
             '''
-
+        
         if not self.__btn_titles:
             btn = self.addButton(MyMessageBox.Ok)
             btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
             btn.setStyleSheet(btn_style)
-        
         else:
             for title in self.__btn_titles:
                 btn = self.addButton(title, QMessageBox.AcceptRole)
