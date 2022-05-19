@@ -2,11 +2,9 @@ import sys, os
 import socket
 import json
 
-sys.path.append('..')
-
-from common.request_type import RequestType
-from common.utils import base64_encode
-from common.utils import print_color, text_format
+from request_type import RequestType
+from utils import base64_encode
+from utils import print_color, text_format
 from connection import is_still_connected
 
 from server.constants import *
