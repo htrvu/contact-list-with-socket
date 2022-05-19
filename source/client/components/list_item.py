@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QLabel, QLayout, QHBoxLayout, QSpacerItem
 
-from client.components.my_frame import MyFrame
-from client.components.round_label import RoundLabel
+from components.my_frame import MyFrame
+from components.round_label import RoundLabel
 
 class ListItem(MyFrame):
     def __init__(self, data, parent=None):
@@ -49,7 +49,6 @@ class ListItem(MyFrame):
         # 3. Stretch the main layout
         self.__main_layout.setStretch(2, 8)
     
-
     def __set_data(self, data):
         self.setWhatsThis(data['id'])
         self.__id.setText(data['id'])

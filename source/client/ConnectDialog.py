@@ -5,14 +5,14 @@ from PyQt5.QtWidgets import QMessageBox
 import socket
 import sys
 
-sys.path.append('..')
+from ui_connectdialog import Ui_ConnectDialog
+from components.my_messagebox import MyMessageBox
 
-from client.ui_connectdialog import Ui_ConnectDialog
-from client.components.my_messagebox import MyMessageBox
+from connection import Connection, ConnectRunner
 
-from client.connection import Connection, ConnectRunner
+from components.my_dialog import MyDialog
 
-from client.components.my_dialog import MyDialog
+import logging
 
 class ConnectSignals(QObject):
     connected = pyqtSignal(socket.socket)
@@ -56,10 +56,12 @@ class ConnectDialog(QtWidgets.QDialog):
 
         if not host or not port_str:
             self.__show_error_msg('Please enter host IP and port!')
+            logging.log(f'[ERROR] Wrong ip address: {host}')
             return
 
         if not port_str.isdigit():
             self.__show_error_msg('Port must be a number!')
+            logging.log(f'[ERROR] Wrong port: {port_str}')
             return
 
         port = int(port_str)
@@ -78,6 +80,7 @@ class ConnectDialog(QtWidgets.QDialog):
             self.close()
         else:
             self.__show_error_msg('Could not connect to server!')
+            logging.log('Could not connect to server')
             return
 
     def __show_error_msg(self, msg):

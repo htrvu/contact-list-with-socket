@@ -2,14 +2,13 @@ import sys, os
 import socket
 import json
 
-sys.path.append('..')
-
-from common.request_type import RequestType
-from common.utils import base64_encode
-from common.utils import print_color, text_format
+from request_type import RequestType
+from utils import base64_encode
+from utils import print_color, text_format
 from connection import is_still_connected
 
-from server.constants import *
+from constants import *
+import logging
 
 
 contact_list = []
@@ -50,6 +49,10 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
 
         contact_list.append(mini_contact)
         contact_dict[key] = full_contact
+
+    logging.log('[STATUS] Data loaded')
+    if DEBUGGING:
+        print_color('Data loaded', text_format.DEBUG)
 
 def create_response(request: dict):
     response_data = None
@@ -99,8 +102,16 @@ def create_response(request: dict):
     return response_data
 
 def reply_request(appsocket: socket.socket, request: dict):
+    print_color(f'Request {request} is on processing...' , text_format.OKGREEN)
+    logging.log(f'[STATUS] Request {request} is on processing...')
+
     message_to_send = str(create_response(request)).encode()
-    message_len = len(message_to_send).to_bytes(4, 'little')
+
+    message_len_int = len(message_to_send)
+    message_len = message_len_int.to_bytes(4, 'little')
+    
+    print_color(f'Response length: {message_len_int}', text_format.OKGREEN)
+    logging.log(f'[STATUS] Response length: {message_len_int}')
 
     try:
         if not is_still_connected(appsocket):
@@ -109,6 +120,10 @@ def reply_request(appsocket: socket.socket, request: dict):
         
         appsocket.sendall(message_len)
         appsocket.sendall(message_to_send)
+        
         print_color(f'Packet sent to {appsocket.getpeername()}', text_format.OKGREEN)
+        logging.log(f'[STATUS] Packet sent to {appsocket.getpeername()}')
+
     except Exception as err:
         print_color(err, text_format.FAIL)
+        logging.log(f'[ERROR] Exception raised from reply request {err}')

@@ -1,18 +1,5 @@
 import socket
-import sys
-import ipaddress
-
-sys.path.append('..')
-
-from server.constants import *
-
-def is_valid_ip_address(ip_address):
-    try:
-        ip = ipaddress.ip_address(ip_address)
-    except ValueError:
-        return False
-    return True
-
+from constants import *
 
 def is_still_connected(sock: socket.socket):
     try:
@@ -20,7 +7,6 @@ def is_still_connected(sock: socket.socket):
     except:
         return False
     return True
-
 
 class Connection:
     def __init__(self, ip_address = HOST, port = PORT):

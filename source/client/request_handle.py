@@ -1,9 +1,10 @@
 import socket
-from common.utils import print_color, text_format
+from utils import print_color, text_format
 import ast
-from common.request_type import RequestType
+from request_type import RequestType
 
-from client.constants import *
+from constants import *
+import logging
 
 
 def create_block_request(block_id):
@@ -26,6 +27,7 @@ def request_to_server(appsocket: socket.socket, request: dict):
         appsocket.sendall(request)
     except socket.error as err:
         print_color(str(err), text_format.FAIL)
+        logging.log(f'[ERROR] Exception raised when sending request to server: {err}' )
         return None
 
     response_data = None
@@ -39,6 +41,7 @@ def request_to_server(appsocket: socket.socket, request: dict):
             
             response_len = int.from_bytes(response_header, 'little')
             print_color(f'Packet received size: {response_len} (bytes)', text_format.OKGREEN)
+            logging.log(f'[STATUS] Packet received size: {response_len} (bytes)' )
 
             response_bytes = b''
             cur_len = 0
@@ -53,6 +56,7 @@ def request_to_server(appsocket: socket.socket, request: dict):
 
                 except socket.timeout as err:
                     print_color(str(err), text_format.FAIL)
+                    logging.log(f'[ERROR] Exception raised when receiving response from server: {err}' )
                     break
 
             response_str = response_bytes.decode('utf-8')
@@ -60,5 +64,6 @@ def request_to_server(appsocket: socket.socket, request: dict):
             break
         except socket.error as err:
             print_color(str(err), text_format.FAIL)
+            logging.log(f'[ERROR] Exception raised when receiving response from server: {err}' )
 
     return response_data
