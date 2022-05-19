@@ -20,13 +20,19 @@ import logging
 def serve(conn: socket.socket, addr):
     print_color(f'{addr} connected', text_format.OKGREEN)
     logging.log(f'[STATUS] {addr} connected')
+    
     while True:
         if conn.fileno() == -1:
             print_color(f'{addr[0]} disconnected', text_format.OKBLUE)
             logging.log(f'[STATUS] {addr[0]} disconnected')
             break
-
-        message = conn.recv(REQUEST_LIMIT_SIZE)
+        
+        try:
+            message = conn.recv(REQUEST_LIMIT_SIZE)
+        except socket.error:
+            logging.log('[ERROR] Something went wrong, close connection to {addr}')
+            print_color('Something went wrong, close connection to {addr}', text_format.FAIL)
+            conn.close()
 
         if message:
             if message == b'byebye':
