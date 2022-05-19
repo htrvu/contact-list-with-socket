@@ -9,8 +9,8 @@ def set_log_file_path(path):
 
 def log(message):
     global log_queue
-    current_time = datetime.now().strftime("%b %d %Y %H:%M:%SS")
-    log_queue.append(f'{current_time} {message}')
+    current_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    log_queue.append(f'{current_time} {message}\n')
 
 def save():
     global log_queue
