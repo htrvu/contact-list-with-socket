@@ -1,6 +1,9 @@
+from http.client import PROXY_AUTHENTICATION_REQUIRED
 import socket
 import sys
 import ipaddress
+
+from PyQt5.QtCore import QObject, pyqtSignal
 
 sys.path.append('..')
 
@@ -27,3 +30,43 @@ class Connection:
 
     def close(self):
         self.client.close()
+
+
+class ConnectRunner(QObject):
+    ok = pyqtSignal(socket.socket)
+    fail = pyqtSignal()
+    finished = pyqtSignal()
+
+    def __init__(self, host, port):
+        super(ConnectRunner, self).__init__()
+        self.__host = host
+        self.__port = port
+
+    def run(self):
+        try:
+            conn = Connection(self.__host, self.__port)
+            self.socket = conn.get_socket()
+            self.ok.emit(self.socket)
+        except:
+            self.fail.emit()
+        self.finished.emit()
+
+
+class ReconnectRunner(QObject):
+    ok = pyqtSignal()
+    fail = pyqtSignal()
+    finished = pyqtSignal()
+
+    def __init__(self, socket, host, port):
+        super(ReconnectRunner, self).__init__()
+        self.__socket = socket
+        self.__host = host
+        self.__port = port        
+
+    def run(self):
+        try:
+            self.__socket.connect((self.__host, self.__port))
+            self.ok.emit()
+        except:
+            self.fail.emit()
+        self.finished.emit()
