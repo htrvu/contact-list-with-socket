@@ -9,12 +9,8 @@ from MainWindow import MainWindow
 from ConnectDialog import ConnectDialog
 import logging
 
-client_socket = None
-
 def start_window(my_socket):
-    global client_socket
-    client_socket = my_socket
-    main_window = MainWindow(client_socket)
+    main_window = MainWindow(my_socket)
     main_window.show()
 
 def logging_thread(log_file_path):
@@ -22,7 +18,6 @@ def logging_thread(log_file_path):
     while True:
         logging.save()
         time.sleep(5)
-
 
 if __name__ == "__main__":
 
