@@ -19,7 +19,6 @@ def start_window(my_socket):
 def close_socket(my_socket):
     my_socket.send(b'byebye')
     my_socket.close()
-    
 
 if __name__ == "__main__":
     # thread = threading.Thread(target=run_client, args = ())
