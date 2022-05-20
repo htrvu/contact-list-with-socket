@@ -4,6 +4,10 @@ import time
 
 import socket
 
+
+import colorama
+colorama.init()
+
 from utils import print_color
 from utils import text_format
 from factory import reply_request
