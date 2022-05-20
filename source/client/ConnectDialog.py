@@ -1,14 +1,12 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import pyqtSignal, QObject, QThread
-from PyQt5.QtWidgets import QMessageBox
 
 import socket
-import sys
 
 from ui_connectdialog import Ui_ConnectDialog
 from components.my_messagebox import MyMessageBox
 
-from connection import Connection, ConnectRunner
+from connection import ConnectRunner
 
 from components.my_dialog import MyDialog
 
@@ -17,7 +15,6 @@ import app_logging as logging
 class ConnectSignals(QObject):
     connected = pyqtSignal(socket.socket)
     exit = pyqtSignal()
-
 
 class ConnectDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -65,18 +62,17 @@ class ConnectDialog(QtWidgets.QDialog):
             return
 
         port = int(port_str)
-
         self.__connect_threading(host, port)
 
     def __exit_btn_clicked(self):
         self.signals.exit.emit()
         self.close()
 
-    def __show_connect_msg(self, result):
+    def __show_connect_msg(self, socket):
         self.__dialog.close()
 
-        if result is not None:
-            self.signals.connected.emit(result)
+        if socket is not None:
+            self.signals.connected.emit(socket)
             self.close()
         else:
             self.__show_error_msg('Could not connect to server!')
