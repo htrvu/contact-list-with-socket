@@ -4,7 +4,6 @@ import time
 
 import socket
 
-
 import colorama
 colorama.init()
 
@@ -65,23 +64,27 @@ def run_server():
     print_color('[STATUS] initialize server', text_format.OKBLUE)
     logging.log('[STATUS] initialize server')
 
-    server = connection.Connection(ip_address = HOST, port = PORT)
-    socket = server.get_socket()
+    server = connection.Connection(ip_address = HOST, port = PORT).get_socket()
 
     # socket.listten(backlog) - Backlog: The maximum length of the pending connections queue.
-    socket.listen(100)
+    server.listen(100)
 
     print_color('[STATUS] listening...', text_format.OKBLUE)
     logging.log('[STATUS] listening...')
 
     while True:
         try:
-            conn, addr = socket.accept()
+            conn, addr = server.accept()
         except KeyboardInterrupt as err:
             break
 
         thread = threading.Thread(target = serve, args = (conn, addr))
         thread.start()
+
+    server.close()
+    print_color('[STATUS] server closed', text_format.OKBLUE)
+    logging.log('[STATUS] server closed')
+
 
 def save_log(logfile):
     save_log.keep = True
