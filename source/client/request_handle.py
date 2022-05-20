@@ -1,7 +1,11 @@
 import socket
-from common.utils import print_color, text_format
+from utils import print_color, text_format
 import ast
-from common.request import RequestType
+from request_type import RequestType
+
+from constants import *
+import app_logging as logging
+
 
 def create_block_request(block_id):
     return {
@@ -20,13 +24,12 @@ def request_to_server(appsocket: socket.socket, request: dict):
     request = str(request).encode()
     
     try:
-        appsocket.send(request)
-    except Exception as err:
+        appsocket.sendall(request)
+    except socket.error as err:
         print_color(str(err), text_format.FAIL)
+        logging.log(f'[ERROR] Exception raised when sending request to server: {err}' )
         return None
 
-    BYTES_PER_BLOCK = 1024
-    
     response_data = None
 
     while True:
@@ -37,23 +40,30 @@ def request_to_server(appsocket: socket.socket, request: dict):
                 continue
             
             response_len = int.from_bytes(response_header, 'little')
-            print('[DEBUG]: ' , response_len)
+            print_color(f'Packet received size: {response_len} (bytes)', text_format.OKGREEN)
+            logging.log(f'[STATUS] Packet received size: {response_len} (bytes)' )
 
-            message_block_count = (response_len + BYTES_PER_BLOCK - 1) // BYTES_PER_BLOCK
-
-            response_data_str = ''
-            mess = ''
-            for i in range(message_block_count):
+            response_bytes = b''
+            cur_len = 0
+            while True:
                 try:
-                    mess = appsocket.recv(BYTES_PER_BLOCK).decode('utf-8')
-                    response_data_str = response_data_str + mess
-                except Exception as e:
-                    pass
-            
-            # print(response_data_str[-100:])
-            response_data = ast.literal_eval(response_data_str)
+                    part = appsocket.recv(min(BYTES_PER_BLOCK, response_len - cur_len))
+                    response_bytes += part
+                    cur_len += len(part)
+
+                    if cur_len == response_len:
+                        break
+
+                except socket.timeout as err:
+                    print_color(str(err), text_format.FAIL)
+                    logging.log(f'[ERROR] Exception raised when receiving response from server: {err}' )
+                    break
+
+            response_str = response_bytes.decode('utf-8')
+            response_data = ast.literal_eval(response_str)
             break
-        except Exception as e:
-            return # do something
+        except socket.error as err:
+            print_color(str(err), text_format.FAIL)
+            logging.log(f'[ERROR] Exception raised when receiving response from server: {err}' )
 
     return response_data

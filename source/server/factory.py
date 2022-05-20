@@ -2,16 +2,14 @@ import sys, os
 import socket
 import json
 
-sys.path.append('..')
-
-from common.request import RequestType
-from common.utils import base64_encode
-from common.utils import print_color, text_format
+from request_type import RequestType
+from utils import base64_encode
+from utils import print_color, text_format
 from connection import is_still_connected
 
-CONTACT_FILE_PATH = '../data/contact_data.json'
-LARGE_IMAGE_DIR = '../data/large_image'
-SMALL_IMAGE_DIR = '../data/small_image'
+from constants import *
+import app_logging as logging
+
 
 contact_list = []
 contact_dict = {}
@@ -29,8 +27,6 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
         if os.path.exists(small_image_path):
             with open(small_image_path, 'rb') as fp:
                 small_image_b64 = base64_encode(fp.read())
-                #print('[DEBUG]: ', small_image_b64)
-                #exit()
 
         if os.path.exists(large_image_Path):
             with open(large_image_Path, 'rb') as fp:
@@ -50,8 +46,13 @@ with open(CONTACT_FILE_PATH, 'r') as fp:
             'email': jsvalue[key]['email'],
             'bio': jsvalue[key]['bio']
         }
+
         contact_list.append(mini_contact)
         contact_dict[key] = full_contact
+
+    logging.log('[STATUS] Data loaded')
+    if DEBUGGING:
+        print_color('Data loaded', text_format.DEBUG)
 
 def create_response(request: dict):
     response_data = None
@@ -72,12 +73,16 @@ def create_response(request: dict):
             right = min(left + blocksize, len(contact_list))
 
             if left < right:
-                response_data = {
-                    'status': 'ok',
-                    'dtype' : 'block',
-                    'block_id': block_id,
-                    'data': contact_list[left:right]
-                }
+                data = contact_list[left:right]
+            else:
+                data = []
+
+            response_data = {
+                'status': 'ok',
+                'dtype' : 'block',
+                'block_id': block_id,
+                'data': data
+            }
 
     elif request['dtype'] == RequestType.SINGLE_ID:
         id = request['id']
@@ -97,16 +102,28 @@ def create_response(request: dict):
     return response_data
 
 def reply_request(appsocket: socket.socket, request: dict):
+    print_color(f'Request {request} is on processing...' , text_format.OKGREEN)
+    logging.log(f'[STATUS] Request {request} is on processing...')
+
     message_to_send = str(create_response(request)).encode()
-    message_len = len(message_to_send).to_bytes(4, 'little')
-    print('[DEBUG], ', len(message_to_send))
+
+    message_len_int = len(message_to_send)
+    message_len = message_len_int.to_bytes(4, 'little')
+    
+    print_color(f'Response length: {message_len_int}', text_format.OKGREEN)
+    logging.log(f'[STATUS] Response length: {message_len_int}')
+
     try:
         if not is_still_connected(appsocket):
             appsocket.close()
             return
         
-        appsocket.send(message_len)
-        appsocket.send(message_to_send)
-        print_color('Packet sent', text_format.OKGREEN)
+        appsocket.sendall(message_len)
+        appsocket.sendall(message_to_send)
+        
+        print_color(f'Packet sent to {appsocket.getpeername()}', text_format.OKGREEN)
+        logging.log(f'[STATUS] Packet sent to {appsocket.getpeername()}')
+
     except Exception as err:
         print_color(err, text_format.FAIL)
+        logging.log(f'[ERROR] Exception raised from reply request {err}')

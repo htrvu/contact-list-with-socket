@@ -7,7 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtGui import QFontDatabase
+import os
 class Ui_ConnectDialog(object):
     def setupUi(self, ConnectDialog):
         ConnectDialog.setObjectName("ConnectDialog")
@@ -72,6 +73,16 @@ class Ui_ConnectDialog(object):
 "    background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #8e2de2,  stop:1 #4a00e0);\n"
 "}")
         self.widget.setObjectName("widget")
+
+        # fonts
+        fonts = os.listdir('./assets/fonts')
+        FONTS_DICT = {}
+        for font in fonts:
+            name = font.replace('.ttf', '')
+            id = QFontDatabase.addApplicationFont('./assets/fonts/' + font)
+            family = QFontDatabase.applicationFontFamilies(id)[0]
+            FONTS_DICT[name] = family
+
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setContentsMargins(-1, 0, -1, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -79,8 +90,8 @@ class Ui_ConnectDialog(object):
         self.horizontalLayout.addItem(spacerItem)
         self.connectBtn = QtWidgets.QPushButton(self.widget)
         font = QtGui.QFont()
-        font.setFamily("SVN-Cookies")
-        font.setPointSize(-1)
+        font = QtGui.QFont(FONTS_DICT['SVN-Cookies'])
+        
         font.setBold(False)
         font.setWeight(50)
         self.connectBtn.setFont(font)
@@ -90,8 +101,8 @@ class Ui_ConnectDialog(object):
         self.horizontalLayout.addWidget(self.connectBtn)
         self.exitBtn = QtWidgets.QPushButton(self.widget)
         font = QtGui.QFont()
-        font.setFamily("SVN-Cookies")
-        font.setPointSize(-1)
+        font = QtGui.QFont(FONTS_DICT['SVN-Cookies'])
+        
         font.setBold(False)
         font.setWeight(50)
         self.exitBtn.setFont(font)
