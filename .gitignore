@@ -3,9 +3,7 @@ source/client/__pycache__/
 souce/server/__pycache__/
 souce/server/build/
 source/server/dist/
-source/server/main.spec
 souce/server/server.log
 source/client/build/
 source/client/dist/
-source/client/main.spec
 souce/client/client.log
