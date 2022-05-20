@@ -1,18 +1,6 @@
-from http.client import PROXY_AUTHENTICATION_REQUIRED
 import socket
-import sys
-import ipaddress
 
 from PyQt5.QtCore import QObject, pyqtSignal
-
-import app_logging as logging
-
-def is_valid_ip_address(ip_address):
-    try:
-        ip = ipaddress.ip_address(ip_address)
-    except ValueError:
-        return False
-    return True
 
 class Connection:
     def __init__(self, ip_address: str, port: int):

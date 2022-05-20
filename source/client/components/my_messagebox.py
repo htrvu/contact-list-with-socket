@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QLabel, QDialogButtonBox
 
 class MyMessageBox(QMessageBox):
-    def __init__(self, msg = None, btn_titles = [], parent = None):
+    def __init__(self, title = 'Message', msg = None, btn_titles = [], parent = None):
         super().__init__(parent)
         self.__btn_titles = btn_titles
 
@@ -23,7 +23,7 @@ class MyMessageBox(QMessageBox):
         grid_layout.addWidget(qt_msgbox_label, 0, 0, alignment=Qt.AlignCenter)
         grid_layout.addWidget(qt_msgbox_buttonbox, 1, 0, alignment=Qt.AlignCenter)
 
-        self.setWindowTitle('Error Message')
+        self.setWindowTitle(title)
         self.setWindowIcon(QtGui.QIcon('./assets/icons/contact.png'))
 
         # text
@@ -62,11 +62,5 @@ class MyMessageBox(QMessageBox):
                 btn = self.addButton(title, QMessageBox.AcceptRole)
                 btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                 btn.setStyleSheet(btn_style)
-
-            # for btn_title in self.__btn_titles:
-            #     btn = self.addButton(MyMessageBox.)
-            #     btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-            #     btn.setText(btn_title)
-            #     btn.setStyleSheet(btn_style)
 
 

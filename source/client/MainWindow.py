@@ -154,7 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(2)
 
     def __show_connect_error(self, msg):
-        message_box = MyMessageBox(msg, ['Reconnect', 'Cancel'] ,self)
+        message_box = MyMessageBox('Error Message', msg, ['Reconnect', 'Cancel'] ,self)
         reply = message_box.exec_()
 
         if reply == 0:
@@ -171,19 +171,22 @@ class MainWindow(QtWidgets.QMainWindow):
         if result:
             print_color('Reconnected successfully!!', text_format.OKGREEN)
             logging.log('[STATUS] Reconnected successfully!')
-            MyMessageBox('Reconnected successfully!', [], self).exec_()
+            MyMessageBox('Message', 'Reconnected successfully!', [], self).exec_()
         else:
             print_color('Failed to reconnect!', text_format.FAIL)
             logging.log('[STATUS] Failed to reconnect!')
-            MyMessageBox('Failed to reconnect!', [], self).exec_()
+            MyMessageBox('Error Message', 'Failed to reconnect!', [], self).exec_()
 
     def closeEvent(self, event):
-        reply = MyMessageBox('Do you want to close the window?', ['Yes', 'No'] ,self).exec_()
+        reply = MyMessageBox('Message', 'Do you want to close the window?', ['Yes', 'No'], self).exec_()
 
         if reply == 0:
             logging.log('[STATUS] Close connection with server')
-            self.__my_socket.send(b'close_connection')
-            self.__my_socket.close()
+            try:
+                self.__my_socket.send(b'close_connection')
+                self.__my_socket.close()
+            except:
+                pass
             super(MainWindow, self).closeEvent(event)
             event.accept()
             logging.log('[STATUS] Application closed')

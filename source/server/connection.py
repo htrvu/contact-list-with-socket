@@ -11,7 +11,6 @@ def is_still_connected(sock: socket.socket):
 class Connection:
     def __init__(self, ip_address = HOST, port = PORT):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         try:
             self.server.bind((ip_address, port))

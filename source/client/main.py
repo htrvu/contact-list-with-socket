@@ -1,6 +1,5 @@
 import sys
 import time
-
 import threading
 
 from PyQt5 import QtWidgets
