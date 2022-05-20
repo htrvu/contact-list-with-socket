@@ -12,7 +12,7 @@ from connection import Connection, ConnectRunner
 
 from components.my_dialog import MyDialog
 
-import logging
+import app_logging as logging
 
 class ConnectSignals(QObject):
     connected = pyqtSignal(socket.socket)

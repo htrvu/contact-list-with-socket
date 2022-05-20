@@ -11,7 +11,7 @@ from factory import reply_request
 
 import ast
 from constants import *
-import logging
+import app_logging as logging
 
 '''
     socket.socket, (ip address, tcp port) = socket.socket()
@@ -31,18 +31,25 @@ def serve(conn: socket.socket, addr):
             message = conn.recv(REQUEST_LIMIT_SIZE)
         except socket.error:
             logging.log('[ERROR] Something went wrong, close connection to {addr}')
-            print_color('Something went wrong, close connection to {addr}', text_format.FAIL)
+            print_color(f'Something went wrong, close connection to {addr}', text_format.FAIL)
             conn.close()
+            break
 
         if message:
-            if message == b'byebye':
+            if message == b'close_connection':
                 print_color(f'{addr} disconnected', text_format.CLOSE)
                 logging.log(f'[STATUS] {addr} disconnected')
                 conn.close()
                 break
             else:
                 message = message.decode('utf-8')
-                message_dict = ast.literal_eval(message)
+
+                try:
+                    message_dict = ast.literal_eval(message)
+                except:
+                    print_color(f'Request in wrong format.', text_format.FAIL)
+                    logging.log(f'Request in wrong format: {message}')
+                    continue
 
                 if DEBUGGING:
                     print_color(f'Message as dict: {message_dict}', text_format.DEBUG)
@@ -56,25 +63,43 @@ def run_server():
 
     server = connection.Connection(ip_address = HOST, port = PORT)
     socket = server.get_socket()
+
+    # socket.listten(backlog) - Backlog: The maximum length of the pending connections queue.
     socket.listen(100)
 
     print_color('[STATUS] listtening...', text_format.OKBLUE)
     logging.log('[STATUS] listtening...')
 
     while True:
-        conn, addr = socket.accept()
+        try:
+            conn, addr = socket.accept()
+        except KeyboardInterrupt as err:
+            break
+
         thread = threading.Thread(target = serve, args = (conn, addr))
         thread.start()
 
 def save_log(logfile):
+    save_log.keep = True
     logging.set_log_file_path(logfile)
 
     while True:
+        if not save_log.keep:
+            break
         logging.save()
         time.sleep(5)
 
+    print('break')
+    logging.save()
+    
+
 if __name__ == '__main__':
     server_thread = threading.Thread(target = run_server, args = ())
-    server_thread.start()
     logging_thread = threading.Thread(target = save_log, args = ('./server.log', ))
+
+    server_thread.start()
     logging_thread.start()
+
+    server_thread.join()
+    save_log.keep = False
+    logging_thread.join()

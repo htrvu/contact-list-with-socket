@@ -5,7 +5,7 @@ import ipaddress
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-import logging
+import app_logging as logging
 
 def is_valid_ip_address(ip_address):
     try:

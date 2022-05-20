@@ -8,7 +8,7 @@ from utils import print_color, text_format
 from connection import is_still_connected
 
 from constants import *
-import logging
+import app_logging as logging
 
 
 contact_list = []
