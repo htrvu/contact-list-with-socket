@@ -71,8 +71,8 @@ def run_server():
     # socket.listten(backlog) - Backlog: The maximum length of the pending connections queue.
     socket.listen(100)
 
-    print_color('[STATUS] listtening...', text_format.OKBLUE)
-    logging.log('[STATUS] listtening...')
+    print_color('[STATUS] listening...', text_format.OKBLUE)
+    logging.log('[STATUS] listening...')
 
     while True:
         try:
