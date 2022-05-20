@@ -1,0 +1,45 @@
+20-05-2022 22:30:47 [STATUS] Data loaded
+20-05-2022 22:30:47 [STATUS] initialize server
+20-05-2022 22:30:47 [STATUS] listening...
+20-05-2022 22:30:59 [STATUS] ('127.0.0.1', 60924) connected
+20-05-2022 22:31:01 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 0}
+20-05-2022 22:31:01 [STATUS] Request {'dtype': 'block', 'block_id': 0} is on processing...
+20-05-2022 22:31:01 [STATUS] Response length: 93440
+20-05-2022 22:31:01 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:31:05 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 1}
+20-05-2022 22:31:05 [STATUS] Request {'dtype': 'block', 'block_id': 1} is on processing...
+20-05-2022 22:31:05 [STATUS] Response length: 98427
+20-05-2022 22:31:05 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:31:33 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 0}
+20-05-2022 22:31:33 [STATUS] Request {'dtype': 'block', 'block_id': 0} is on processing...
+20-05-2022 22:31:33 [STATUS] Response length: 93440
+20-05-2022 22:31:33 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:31:41 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 1}
+20-05-2022 22:31:41 [STATUS] Request {'dtype': 'block', 'block_id': 1} is on processing...
+20-05-2022 22:31:41 [STATUS] Response length: 98427
+20-05-2022 22:31:41 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:33:30 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 0}
+20-05-2022 22:33:30 [STATUS] Request {'dtype': 'block', 'block_id': 0} is on processing...
+20-05-2022 22:33:30 [STATUS] Response length: 93440
+20-05-2022 22:33:30 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:48:23 [DEBUG] Message as dict: {'dtype': 'single_id', 'id': 'C000004'}
+20-05-2022 22:48:23 [STATUS] Request {'dtype': 'single_id', 'id': 'C000004'} is on processing...
+20-05-2022 22:48:23 [STATUS] Response length: 446930
+20-05-2022 22:48:23 [STATUS] Packet sent to ('127.0.0.1', 60924)
+20-05-2022 22:48:50 [STATUS] Data loaded
+20-05-2022 22:48:50 [STATUS] initialize server
+20-05-2022 22:48:50 [STATUS] listening...
+20-05-2022 22:48:53 [STATUS] ('127.0.0.1', 64744) connected
+20-05-2022 22:48:57 [DEBUG] Message as dict: {'dtype': 'single_id', 'id': 'C000010'}
+20-05-2022 22:48:57 [STATUS] Request {'dtype': 'single_id', 'id': 'C000010'} is on processing...
+20-05-2022 22:48:57 [STATUS] Response length: 469011
+20-05-2022 22:48:57 [STATUS] Packet sent to ('127.0.0.1', 64744)
+20-05-2022 22:49:00 [DEBUG] Message as dict: {'dtype': 'block', 'block_id': 2}
+20-05-2022 22:49:00 [STATUS] Request {'dtype': 'block', 'block_id': 2} is on processing...
+20-05-2022 22:49:00 [STATUS] Response length: 93936
+20-05-2022 22:49:00 [STATUS] Packet sent to ('127.0.0.1', 64744)
+20-05-2022 22:49:00 [DEBUG] Message as dict: {'dtype': 'single_id', 'id': 'C000017'}
+20-05-2022 22:49:00 [STATUS] Request {'dtype': 'single_id', 'id': 'C000017'} is on processing...
+20-05-2022 22:49:00 [STATUS] Response length: 450878
+20-05-2022 22:49:00 [STATUS] Packet sent to ('127.0.0.1', 64744)
+20-05-2022 22:49:12 [STATUS] ('127.0.0.1', 64744) disconnected

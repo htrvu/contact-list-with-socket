@@ -63,7 +63,7 @@ def create_response(request: dict):
         if block_id == -1:
             response_data = {
                 'status': 'ok',
-                'dtype' : 'block',
+                'dtype' : RequestType.BLOCK,
                 'block_id': block_id,
                 'data': contact_list
             }
@@ -79,7 +79,7 @@ def create_response(request: dict):
 
             response_data = {
                 'status': 'ok',
-                'dtype' : 'block',
+                'dtype' : RequestType.BLOCK,
                 'block_id': block_id,
                 'data': data
             }
@@ -99,6 +99,9 @@ def create_response(request: dict):
     else:
         raise Exception('Invalid request type')
     
+    with open('tmp.txt', 'w') as f:
+        f.write(str(response_data))
+        
     return response_data
 
 def reply_request(appsocket: socket.socket, request: dict):

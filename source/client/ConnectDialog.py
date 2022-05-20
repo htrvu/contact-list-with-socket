@@ -80,5 +80,5 @@ class ConnectDialog(QtWidgets.QDialog):
             return
 
     def __show_error_msg(self, msg):
-        MyMessageBox(msg, [], self).exec_()
+        MyMessageBox('Error Message', msg, [], self).exec_()
 
