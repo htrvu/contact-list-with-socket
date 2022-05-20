@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
-import sys
 
 import socket
 
@@ -16,7 +15,7 @@ from connection import ReconnectRunner
 
 from utils import print_color, text_format
 
-import logging
+import app_logging as logging
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -179,13 +178,18 @@ class MainWindow(QtWidgets.QMainWindow):
             MyMessageBox('Failed to reconnect!', [], self).exec_()
 
     def closeEvent(self, event):
-        logging.log('[STATUS] Close connection with server')
-        self.__my_socket.send('close_connection')
-        self.__my_socket.close()
-        super(MainWindow, self).closeEvent(event)
-        logging.log('[STATUS] Application closed')
-        
-            
+        reply = MyMessageBox('Do you want to close the window?', ['Yes', 'No'] ,self).exec_()
+
+        if reply == 0:
+            logging.log('[STATUS] Close connection with server')
+            self.__my_socket.send(b'close_connection')
+            self.__my_socket.close()
+            super(MainWindow, self).closeEvent(event)
+            event.accept()
+            logging.log('[STATUS] Application closed')
+        else:
+            event.ignore()
+            logging.log('[STATUS] Application still opening')
 
     def __reconnect_threading(self):
         # close current socket

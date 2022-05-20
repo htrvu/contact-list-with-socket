@@ -4,7 +4,7 @@ import ast
 from request_type import RequestType
 
 from constants import *
-import logging
+import app_logging as logging
 
 
 def create_block_request(block_id):
