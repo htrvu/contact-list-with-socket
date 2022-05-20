@@ -1,9 +1,9 @@
 # pycache and redundant files
 source/client/__pycache__/
-souce/server/__pycache__/
-souce/server/build/
+source/server/__pycache__/
+source/server/build/
 source/server/dist/
-souce/server/server.log
+source/server/server.log
 source/client/build/
 source/client/dist/
-souce/client/client.log
+source/client/client.log
