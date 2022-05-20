@@ -1,4 +1,4 @@
-# pycache
+# pycache and redundant files
 source/client/__pycache__
 souce/server/__pycache__
 souce/server/build
