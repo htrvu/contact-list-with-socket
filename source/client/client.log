@@ -1,0 +1,21 @@
+20-05-2022 22:31:01 [STATUS] Packet received size: 93440 (bytes)
+20-05-2022 22:31:05 [STATUS] Packet received size: 98427 (bytes)
+20-05-2022 22:31:33 [STATUS] Packet received size: 93440 (bytes)
+20-05-2022 22:31:41 [STATUS] Packet received size: 98427 (bytes)
+20-05-2022 22:33:30 [STATUS] Packet received size: 93440 (bytes)
+20-05-2022 22:48:23 [STATUS] Packet received size: 446930 (bytes)
+20-05-2022 22:48:25 [STATUS] Packet received size: 98427 (bytes)
+20-05-2022 22:48:25 [STATUS] Packet received size: 459946 (bytes)
+20-05-2022 22:48:29 [ERROR] Exception raised when sending request to server: [WinError 10054] An existing connection was forcibly closed by the remote host
+20-05-2022 22:48:30 [STATUS] Reconnecting to 127.0.0.1:15215
+20-05-2022 22:48:30 [ERROR] Failed to get contact detail from Server!
+20-05-2022 22:48:32 [STATUS] Failed to reconnect!
+20-05-2022 22:48:52 [ERROR] Exception raised when sending request to server: [WinError 10057] A request to send or receive data was disallowed because the socket is not connected and (when sending on a datagram socket using a sendto call) no address was supplied
+20-05-2022 22:48:53 [STATUS] Reconnecting to 127.0.0.1:15215
+20-05-2022 22:48:53 [ERROR] Failed to get contact detail from Server!
+20-05-2022 22:48:53 [STATUS] Reconnected successfully!
+20-05-2022 22:48:57 [STATUS] Packet received size: 469011 (bytes)
+20-05-2022 22:49:00 [STATUS] Packet received size: 93936 (bytes)
+20-05-2022 22:49:00 [STATUS] Packet received size: 450878 (bytes)
+20-05-2022 22:49:12 [STATUS] Close connection with server
+20-05-2022 22:49:12 [STATUS] Application closed
