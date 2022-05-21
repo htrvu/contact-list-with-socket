@@ -98,9 +98,6 @@ def create_response(request: dict):
             }
     else:
         raise Exception('Invalid request type')
-    
-    with open('tmp.txt', 'w') as f:
-        f.write(str(response_data))
         
     return response_data
 
