@@ -64,7 +64,12 @@ def run_server():
     print_color('[STATUS] initialize server', text_format.OKBLUE)
     logging.log('[STATUS] initialize server')
 
-    server = connection.Connection(ip_address = HOST, port = PORT).get_socket()
+    try:
+        server = connection.Connection(ip_address = HOST, port = PORT).get_socket()
+    except:
+        print_color('[ERROR] failed on start server, maybe caused by another session alive.', text_format.FAIL)
+        logging.log('[ERROR] failed on start server, maybe caused by another session alive.')
+        return
 
     # socket.listten(backlog) - Backlog: The maximum length of the pending connections queue.
     server.listen(100)
