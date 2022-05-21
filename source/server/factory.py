@@ -90,6 +90,7 @@ def create_response(request: dict):
             response_data = {
                 'status': 'ok',
                 'dtype': RequestType.SINGLE_ID,
+                'id': id,
                 'data': contact_dict[id]
             }
         else:
