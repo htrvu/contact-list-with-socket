@@ -26,21 +26,22 @@ cd DigitalContact
 ### 2. Build the source codes
 #### a. Client
 ```bash
-cd ./source/client
+cd ./source/client # path to client folder
 pyinstaller main.spec
 ```
 
 #### b. Server
 ```bash
-cd ../server
+cd ../server # path to server folder
 pyinstaller main.spec
 ```
 
 #### c. Remove unnecessary stuffs
 ```bash
-cd ..
+cd .. # path to source folder
 mv client/dist/DigitalContact.exe client/DigitalContact.exe
 mv server/dist/DigitalContact-Server.exe server/DigitalContact-Server.exe
 rm -r client/dist client/build server/dist server/build
 ```
 
+[//]: <add some screenshots>
