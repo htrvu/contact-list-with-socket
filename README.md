@@ -7,7 +7,7 @@ Our app manages a digital contact list using Socket programming, with TCP at Tra
 
 ## Try our app
 
-Get the lastest version of our app by following these steps
+Get the latest version of our app by following these steps
 ```bash
 curl -fsSL github.com/htrvu/contact-list-with-socket/releases/latest/download/DigitalContact.zip -O
 unzip -q DigitalContact.zip -d DigitalContact
